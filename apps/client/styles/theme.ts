@@ -1,8 +1,6 @@
+import * as colors from '@material-ui/core/colors';
+
 const BASE_SPACE_AMOUNT = 4;
-const colors = {
-  black: '#333',
-  white: '#fff',
-} as const;
 
 export const theme = {
   typography: {
@@ -13,4 +11,5 @@ export const theme = {
   colors: {
     ...colors,
   },
+  transition: {},
 };

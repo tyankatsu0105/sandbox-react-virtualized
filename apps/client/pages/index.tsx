@@ -1,17 +1,7 @@
 import * as React from 'react';
+import * as Templates from '~client/ui/templates';
 
 const Index = () => (
-  <form action="">
-    <div>
-      <label htmlFor="name">name</label>
-      <input type="text" name="name" id="name" />
-    </div>
-
-    <div>
-      <label htmlFor="age">age</label>
-      <input type="text" name="age" id="age" />
-    </div>
-  </form>
+  <Templates.OneColumn.Component></Templates.OneColumn.Component>
 );
-
 export default Index;

@@ -6,7 +6,8 @@ import { theme } from './theme';
 export const GlobalStyle = createGlobalStyle`
 ${superFormReset}
 body{
-  font-family: ${theme.typography.fontFamily}
+  font-family: ${theme.typography.fontFamily};
+  font-size: 14px;
 }
 
 a{
