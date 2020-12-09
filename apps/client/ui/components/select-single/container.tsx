@@ -85,6 +85,23 @@ export const Component: React.VFC<Props> = (props) => {
     [setValues, changeOpenStatus]
   );
 
+  const handleClickResetValue = React.useCallback(() => {
+    setValues([]);
+  }, [setValues]);
+
+  const handleEnterResetValue = React.useCallback(
+    (event: React.KeyboardEvent<HTMLButtonElement>) => {
+      Shared.Utils.Keys.keyDownHandler({
+        event,
+        keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
+        callback: () => {
+          setValues([]);
+        },
+      });
+    },
+    [setValues]
+  );
+
   return (
     <Presenter.Component
       options={props.options}
@@ -96,6 +113,8 @@ export const Component: React.VFC<Props> = (props) => {
       values={values}
       handleClickOptionListItem={handleClickOptionListItem}
       handleKeyDownOptionListItem={handleKeyDownOptionListItem}
+      handleClickResetValue={handleClickResetValue}
+      handleEnterResetValue={handleEnterResetValue}
     />
   );
 };

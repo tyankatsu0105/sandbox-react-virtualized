@@ -7,6 +7,7 @@ import { AutoSizer as ReactVirtualizedAutoSizer } from 'react-virtualized/dist/c
 import { CSSTransition } from 'react-transition-group';
 
 import styled from 'styled-components';
+import { loadGetInitialProps } from 'next/dist/next-server/lib/utils';
 
 // ----------------------------------------
 // helpers
@@ -37,6 +38,10 @@ type Props = {
   handleKeyDownOptionListItem: (
     event: React.KeyboardEvent<HTMLLIElement>
   ) => void;
+  handleClickResetValue: () => void;
+  handleEnterResetValue: (
+    event: React.KeyboardEvent<HTMLButtonElement>
+  ) => void;
 };
 
 // ----------------------------------------
@@ -62,47 +67,59 @@ export const Component: React.VFC<Props> = (props) => {
   };
 
   return (
-    <Wrap>
-      <Control
-        tabIndex={0}
-        onClick={props.handleClickControlOpen}
-        onKeyDown={props.handleKeyDownControlOpen}
-      >
-        {props.values.length > 0 ? (
-          props.values[0]
-        ) : (
-          <Placeholder>選択してください</Placeholder>
-        )}
+    <>
+      <Wrap>
+        <Control
+          tabIndex={0}
+          onClick={props.handleClickControlOpen}
+          onKeyDown={props.handleKeyDownControlOpen}
+        >
+          {props.values.length > 0 ? (
+            props.values[0]
+          ) : (
+            <Placeholder>選択してください</Placeholder>
+          )}
 
-        <OpenToggle>{props.isOpen ? 'CLOSE' : 'OPEN'}</OpenToggle>
-      </Control>
+          <OpenToggle>{props.isOpen ? 'CLOSE' : 'OPEN'}</OpenToggle>
+        </Control>
 
-      <CSSTransition
-        classNames={transitionClassName}
-        timeout={700}
-        in={props.isOpen}
-        appear
-        mountOnEnter
-        unmountOnExit
-      >
-        <OptionListWrap>
-          <OptionList>
-            <ReactVirtualizedAutoSizer>
-              {({ height, width }) => (
-                <ReactVirtualizedList
-                  tabIndex={null}
-                  width={width}
-                  height={height}
-                  rowCount={props.options.length}
-                  rowHeight={40}
-                  rowRenderer={rowRenderer}
-                />
-              )}
-            </ReactVirtualizedAutoSizer>
-          </OptionList>
-        </OptionListWrap>
-      </CSSTransition>
-    </Wrap>
+        <CSSTransition
+          classNames={transitionClassName}
+          timeout={700}
+          in={props.isOpen}
+          appear
+          mountOnEnter
+          unmountOnExit
+        >
+          <OptionListWrap>
+            <OptionList>
+              <ReactVirtualizedAutoSizer>
+                {({ height, width }) => (
+                  <ReactVirtualizedList
+                    tabIndex={null}
+                    width={width}
+                    height={height}
+                    rowCount={props.options.length}
+                    rowHeight={40}
+                    rowRenderer={rowRenderer}
+                  />
+                )}
+              </ReactVirtualizedAutoSizer>
+            </OptionList>
+          </OptionListWrap>
+        </CSSTransition>
+      </Wrap>
+
+      <ButtonWrap>
+        <Button
+          type="button"
+          onClick={props.handleClickResetValue}
+          onKeyDown={props.handleEnterResetValue}
+        >
+          clear
+        </Button>
+      </ButtonWrap>
+    </>
   );
 };
 
@@ -175,4 +192,20 @@ const OptionListItem = styled.li`
   &:hover {
     background-color: ${(props) => props.theme.colors.green[200]};
   }
+`;
+
+const ButtonWrap = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: ${(props) => props.theme.spacer(2)};
+`;
+const Button = styled.button`
+  cursor: pointer;
+  background-color: ${(props) => props.theme.colors.common.white};
+  border: 1px solid ${(props) => props.theme.colors.common.black};
+  border-radius: 6px;
+  font-weight: bold;
+  text-align: center;
+  padding: ${(props) => props.theme.spacer(2)}
+    ${(props) => props.theme.spacer(3)};
 `;
