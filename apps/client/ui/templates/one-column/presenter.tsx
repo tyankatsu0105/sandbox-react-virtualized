@@ -7,7 +7,7 @@ import * as Components from '~client/ui/components';
 // helpers
 // ----------------------------------------
 
-const options = Array.from({ length: 100 }).map((_, index) => ({
+const options = Array.from({ length: 1000 }).map((_, index) => ({
   label: `list-${index}`,
   value: index.toString(),
 }));

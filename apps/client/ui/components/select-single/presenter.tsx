@@ -1,6 +1,17 @@
 import * as React from 'react';
-import * as ReactVirtualized from 'react-virtualized';
+import {
+  List as ReactVirtualizedList,
+  ListRowProps as ReactVirtualizedListRowProps,
+} from 'react-virtualized/dist/commonjs/List';
+import { AutoSizer as ReactVirtualizedAutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer';
+import { CSSTransition } from 'react-transition-group';
+
 import styled from 'styled-components';
+
+// ----------------------------------------
+// helpers
+// ----------------------------------------
+const transitionClassName = 'fade';
 
 // ----------------------------------------
 // props
@@ -33,7 +44,7 @@ type Props = {
 // ----------------------------------------
 
 export const Component: React.VFC<Props> = (props) => {
-  const rowRenderer = (rowRendererProps: ReactVirtualized.ListRowProps) => {
+  const rowRenderer = (rowRendererProps: ReactVirtualizedListRowProps) => {
     const option = props.options[rowRendererProps.index];
 
     return (
@@ -66,12 +77,19 @@ export const Component: React.VFC<Props> = (props) => {
         <OpenToggle>{props.isOpen ? 'CLOSE' : 'OPEN'}</OpenToggle>
       </Control>
 
-      {props.isOpen && (
+      <CSSTransition
+        classNames={transitionClassName}
+        timeout={700}
+        in={props.isOpen}
+        appear
+        mountOnEnter
+        unmountOnExit
+      >
         <OptionListWrap>
           <OptionList>
-            <ReactVirtualized.AutoSizer>
+            <ReactVirtualizedAutoSizer>
               {({ height, width }) => (
-                <ReactVirtualized.List
+                <ReactVirtualizedList
                   tabIndex={null}
                   width={width}
                   height={height}
@@ -80,10 +98,10 @@ export const Component: React.VFC<Props> = (props) => {
                   rowRenderer={rowRenderer}
                 />
               )}
-            </ReactVirtualized.AutoSizer>
+            </ReactVirtualizedAutoSizer>
           </OptionList>
         </OptionListWrap>
-      )}
+      </CSSTransition>
     </Wrap>
   );
 };
@@ -117,12 +135,32 @@ const OpenToggle = styled.div`
 
 const OptionListWrap = styled.div`
   border-radius: 6px;
-  transform: translateY(20px);
   box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.2);
   background-color: ${(props) => props.theme.colors.common.white};
   width: 100%;
   position: absolute;
   left: 0;
+
+  &.${transitionClassName}-appear, &.${transitionClassName}-enter {
+    opacity: 0;
+    transform: translate(0, 40px);
+  }
+  &.${transitionClassName}-appear-active,
+    &.${transitionClassName}-enter-active,
+    &.${transitionClassName}-enter-done {
+    opacity: 1;
+    transform: translate(0, 20px);
+    transition: transform 0.4s, opacity 0.4s;
+  }
+  &.${transitionClassName}-exit {
+    opacity: 1;
+    transform: translate(0, 20px);
+  }
+  &.${transitionClassName}-exit-active {
+    opacity: 0;
+    transform: translate(0, 40px);
+    transition: transform 0.4s, opacity 0.4s;
+  }
 `;
 
 const OptionList = styled.ul`
