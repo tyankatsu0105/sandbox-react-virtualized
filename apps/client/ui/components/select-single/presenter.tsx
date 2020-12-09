@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactVirtualized from 'react-virtualized';
 import styled from 'styled-components';
 
 // ----------------------------------------
@@ -31,45 +32,69 @@ type Props = {
 // component
 // ----------------------------------------
 
-export const Component: React.VFC<Props> = (props) => (
-  <>
-    <Control
-      tabIndex={0}
-      onClick={props.handleClickControlOpen}
-      onKeyDown={props.handleKeyDownControlOpen}
-    >
-      {props.values.length > 0 ? (
-        props.values[0]
-      ) : (
-        <Placeholder>選択してください</Placeholder>
+export const Component: React.VFC<Props> = (props) => {
+  const rowRenderer = (rowRendererProps: ReactVirtualized.ListRowProps) => {
+    const option = props.options[rowRendererProps.index];
+
+    return (
+      <OptionListItem
+        key={rowRendererProps.key}
+        style={rowRendererProps.style}
+        tabIndex={0}
+        data-value={option.value}
+        onClick={props.handleClickOptionListItem}
+        onKeyDown={props.handleKeyDownOptionListItem}
+      >
+        {option.label}
+      </OptionListItem>
+    );
+  };
+
+  return (
+    <Wrap>
+      <Control
+        tabIndex={0}
+        onClick={props.handleClickControlOpen}
+        onKeyDown={props.handleKeyDownControlOpen}
+      >
+        {props.values.length > 0 ? (
+          props.values[0]
+        ) : (
+          <Placeholder>選択してください</Placeholder>
+        )}
+
+        <OpenToggle>{props.isOpen ? 'CLOSE' : 'OPEN'}</OpenToggle>
+      </Control>
+
+      {props.isOpen && (
+        <OptionListWrap>
+          <OptionList>
+            <ReactVirtualized.AutoSizer>
+              {({ height, width }) => (
+                <ReactVirtualized.List
+                  tabIndex={null}
+                  width={width}
+                  height={height}
+                  rowCount={props.options.length}
+                  rowHeight={40}
+                  rowRenderer={rowRenderer}
+                />
+              )}
+            </ReactVirtualized.AutoSizer>
+          </OptionList>
+        </OptionListWrap>
       )}
-
-      <OpenToggle>{props.isOpen ? 'CLOSE' : 'OPEN'}</OpenToggle>
-    </Control>
-
-    {props.isOpen && (
-      <OptionListWrap>
-        <OptionList>
-          {props.options.map((option) => (
-            <OptionListItem
-              key={option.value}
-              tabIndex={0}
-              data-value={option.value}
-              onClick={props.handleClickOptionListItem}
-              onKeyDown={props.handleKeyDownOptionListItem}
-            >
-              {option.label}
-            </OptionListItem>
-          ))}
-        </OptionList>
-      </OptionListWrap>
-    )}
-  </>
-);
+    </Wrap>
+  );
+};
 
 // ----------------------------------------
 // styles
 // ----------------------------------------
+
+const Wrap = styled.div`
+  position: relative;
+`;
 
 const Control = styled.div`
   border-radius: 6px;
@@ -92,14 +117,17 @@ const OpenToggle = styled.div`
 
 const OptionListWrap = styled.div`
   border-radius: 6px;
-
   transform: translateY(20px);
   box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.2);
-  /* max-height: 150px; */
-  /* overflow-y: scroll; */
+  background-color: ${(props) => props.theme.colors.common.white};
+  width: 100%;
+  position: absolute;
+  left: 0;
 `;
 
-const OptionList = styled.ul``;
+const OptionList = styled.ul`
+  height: 300px;
+`;
 
 const OptionListItem = styled.li`
   cursor: pointer;
