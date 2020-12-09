@@ -6,7 +6,7 @@ import { ThemeProvider } from 'styled-components';
 import { theme } from '~client/styles/theme';
 import { GlobalStyle } from '~client/styles/global-style';
 
-import * as Shared from '~client/shared';
+import * as Layouts from '~client/layouts';
 
 import 'minireset.css';
 
@@ -21,7 +21,7 @@ const CustomApp = ({ Component, pageProps }: AppProps) => {
     <>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
-        <Shared.Header.Component />
+        <Layouts.Header.Component />
         <Component {...pageProps} />
       </ThemeProvider>
     </>

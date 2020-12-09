@@ -6,28 +6,11 @@ import * as Components from '~client/ui/components';
 // ----------------------------------------
 // helpers
 // ----------------------------------------
-const options = [
-  {
-    label: 'list-1',
-    value: '1',
-  },
-  {
-    label: 'list-2',
-    value: '2',
-  },
-  {
-    label: 'list-3',
-    value: '3',
-  },
-  {
-    label: 'list-4',
-    value: '4',
-  },
-  {
-    label: 'list-5',
-    value: '5',
-  },
-];
+
+const options = Array.from({ length: 100 }).map((_, index) => ({
+  label: `list-${index}`,
+  value: index.toString(),
+}));
 
 // ----------------------------------------
 // props

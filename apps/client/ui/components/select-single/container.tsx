@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import * as Presenter from './presenter';
 import * as ApplicationUtils from '~client/application/utils';
+import * as Shared from '~client/shared';
 
 // ----------------------------------------
 // props
@@ -19,40 +20,82 @@ type Props = {
 
 export const Component: React.VFC<Props> = (props) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const [values, setValues] = React.useState<string[]>([]);
 
-  const handleClose = React.useCallback(() => {
-    setIsOpen(false);
-  }, [setIsOpen]);
+  const changeOpenStatus = React.useCallback(
+    (openStatus: typeof isOpen) => {
+      setIsOpen(openStatus);
+    },
+    [setIsOpen]
+  );
 
   const handleClickControlOpen = React.useCallback(() => {
-    setIsOpen(true);
-  }, [setIsOpen]);
+    changeOpenStatus(true);
+  }, [changeOpenStatus]);
   const handleClickControlClose = React.useCallback(() => {
-    setIsOpen(false);
-  }, [setIsOpen]);
+    changeOpenStatus(false);
+  }, [changeOpenStatus]);
 
   const handleKeyDownControlOpen = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
-      event.keyCode === ApplicationUtils.KeyCode.space && setIsOpen(true);
+      event.keyCode === ApplicationUtils.KeyCode.keyCode.Space &&
+        changeOpenStatus(true);
     },
-    [setIsOpen]
+    [changeOpenStatus]
   );
   const handleKeyDownControlClose = React.useCallback(
     (event: React.KeyboardEvent<HTMLLIElement>) => {
-      event.keyCode === ApplicationUtils.KeyCode.returnAndEnter &&
-        setIsOpen(false);
+      event.keyCode === ApplicationUtils.KeyCode.keyCode.Enter &&
+        changeOpenStatus(false);
     },
-    [setIsOpen]
+    [changeOpenStatus]
   );
+
+  const handleClickOptionListItem = React.useCallback(
+    (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+      setValues([event.currentTarget.dataset.value]);
+      changeOpenStatus(false);
+    },
+    [setValues, changeOpenStatus]
+  );
+
+  const handleKeyDownOptionListItem = React.useCallback(
+    (event: React.KeyboardEvent<HTMLLIElement>) => {
+      Shared.Utils.Keys.moveFocus({
+        event,
+        keyCode: ApplicationUtils.KeyCode.keyCode.ArrowUp,
+        element: event.currentTarget.previousElementSibling as HTMLLIElement,
+      });
+
+      Shared.Utils.Keys.moveFocus({
+        event,
+        keyCode: ApplicationUtils.KeyCode.keyCode.ArrowDown,
+        element: event.currentTarget.nextElementSibling as HTMLLIElement,
+      });
+
+      Shared.Utils.Keys.keyDownHandler({
+        event,
+        keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
+        callback: () => {
+          setValues([event.currentTarget.dataset.value]);
+          changeOpenStatus(false);
+        },
+      });
+    },
+    [setValues, changeOpenStatus]
+  );
+
   return (
     <Presenter.Component
       options={props.options}
       isOpen={isOpen}
-      handleClose={handleClose}
       handleClickControlOpen={handleClickControlOpen}
       handleClickControlClose={handleClickControlClose}
       handleKeyDownControlOpen={handleKeyDownControlOpen}
       handleKeyDownControlClose={handleKeyDownControlClose}
+      values={values}
+      handleClickOptionListItem={handleClickOptionListItem}
+      handleKeyDownOptionListItem={handleKeyDownOptionListItem}
     />
   );
 };
