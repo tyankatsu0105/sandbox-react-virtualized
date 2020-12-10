@@ -56,8 +56,7 @@ export const Component: React.VFC<Props> = (props) => {
     const isSelected = props.values.includes(option.value);
 
     const createRef = () => {
-      if (props.menuItemRef.current === null && rowRendererProps.index === 0)
-        return props.menuItemRef;
+      if (rowRendererProps.index === 0) return props.menuItemRef;
       if (option.value === props.values[0]) return props.menuItemRef;
     };
 
@@ -122,7 +121,7 @@ export const Component: React.VFC<Props> = (props) => {
               <ReactVirtualizedAutoSizer>
                 {({ height, width }) => (
                   <ReactVirtualizedList
-                    tabIndex={null}
+                    tabIndex={-1}
                     scrollToIndex={scrollToIndex}
                     width={width}
                     height={height}
