@@ -52,27 +52,39 @@ type Props = {
 export const Component: React.VFC<Props> = (props) => {
   const rowRenderer = (rowRendererProps: ReactVirtualizedListRowProps) => {
     const option = props.options[rowRendererProps.index];
+    const tabIndex = props.isOpen ? 0 : -1;
+    const isSelected = props.values.includes(option.value);
 
-    const ref = () => {
-      if (option.value === props.values[0]) return props.menuItemRef;
+    const createRef = () => {
       if (props.menuItemRef.current === null && rowRendererProps.index === 0)
         return props.menuItemRef;
+      if (option.value === props.values[0]) return props.menuItemRef;
     };
 
     return (
       <OptionListItem
-        ref={ref()}
+        ref={createRef()}
         key={rowRendererProps.key}
         style={rowRendererProps.style}
-        tabIndex={0}
+        tabIndex={tabIndex}
         data-value={option.value}
         onClick={props.handleClickOptionListItem}
         onKeyDown={props.handleKeyDownOptionListItem}
+        isSelected={isSelected}
       >
         {option.label}
       </OptionListItem>
     );
   };
+
+  const scrollToIndex = React.useMemo(() => {
+    if (props.values.length === 0) return 0;
+
+    const index = props.options.findIndex(
+      (option) => option.value === props.values[0]
+    );
+    return index;
+  }, [props.options, props.values]);
 
   return (
     <>
@@ -111,6 +123,7 @@ export const Component: React.VFC<Props> = (props) => {
                 {({ height, width }) => (
                   <ReactVirtualizedList
                     tabIndex={null}
+                    scrollToIndex={scrollToIndex}
                     width={width}
                     height={height}
                     rowCount={props.options.length}
@@ -202,13 +215,22 @@ const OptionList = styled.ul`
   height: 300px;
 `;
 
-const OptionListItem = styled.li`
+type OptionListItemProps = {
+  isSelected: boolean;
+};
+const OptionListItem = styled.li<OptionListItemProps>`
   cursor: pointer;
+  background-color: ${(props) =>
+    props.isSelected && props.theme.colors.lightGreen[400]};
   padding: ${(props) => props.theme.spacer(2)}
     ${(props) => props.theme.spacer(3)} ${(props) => props.theme.spacer(2)}
     ${(props) => props.theme.spacer(3)};
   &:hover {
-    background-color: ${(props) => props.theme.colors.green[200]};
+    background-color: ${(props) => props.theme.colors.grey[300]};
+  }
+  &:focus {
+    outline: none;
+    background-color: ${(props) => props.theme.colors.grey[400]};
   }
 `;
 
