@@ -57,6 +57,8 @@ export const Component: React.VFC<Props> = (props) => {
 
     const createRef = () => {
       if (rowRendererProps.index === 0) return props.menuItemRef;
+      if (props.menuItemRef.current == null && rowRendererProps.index === 0)
+        return props.menuItemRef;
       if (option.value === props.values[0]) return props.menuItemRef;
     };
 
