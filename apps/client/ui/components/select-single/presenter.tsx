@@ -7,7 +7,6 @@ import { AutoSizer as ReactVirtualizedAutoSizer } from 'react-virtualized/dist/c
 import { CSSTransition } from 'react-transition-group';
 
 import styled from 'styled-components';
-import { loadGetInitialProps } from 'next/dist/next-server/lib/utils';
 
 // ----------------------------------------
 // helpers
@@ -29,7 +28,7 @@ type Props = {
     event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
   handleKeyDownControlClose: (
-    event: React.KeyboardEvent<HTMLLIElement>
+    event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
   values: string[];
   handleClickOptionListItem: (
@@ -42,6 +41,8 @@ type Props = {
   handleEnterResetValue: (
     event: React.KeyboardEvent<HTMLButtonElement>
   ) => void;
+  menuItemRef: React.MutableRefObject<HTMLLIElement>;
+  controlRef: React.MutableRefObject<HTMLDivElement>;
 };
 
 // ----------------------------------------
@@ -52,8 +53,15 @@ export const Component: React.VFC<Props> = (props) => {
   const rowRenderer = (rowRendererProps: ReactVirtualizedListRowProps) => {
     const option = props.options[rowRendererProps.index];
 
+    const ref = () => {
+      if (option.value === props.values[0]) return props.menuItemRef;
+      if (props.menuItemRef.current === null && rowRendererProps.index === 0)
+        return props.menuItemRef;
+    };
+
     return (
       <OptionListItem
+        ref={ref()}
         key={rowRendererProps.key}
         style={rowRendererProps.style}
         tabIndex={0}
@@ -70,9 +78,18 @@ export const Component: React.VFC<Props> = (props) => {
     <>
       <Wrap>
         <Control
+          ref={props.controlRef}
           tabIndex={0}
-          onClick={props.handleClickControlOpen}
-          onKeyDown={props.handleKeyDownControlOpen}
+          onClick={
+            props.isOpen
+              ? props.handleClickControlClose
+              : props.handleClickControlOpen
+          }
+          onKeyDown={
+            props.isOpen
+              ? props.handleKeyDownControlClose
+              : props.handleKeyDownControlOpen
+          }
         >
           {props.values.length > 0 ? (
             props.values[0]
@@ -87,9 +104,6 @@ export const Component: React.VFC<Props> = (props) => {
           classNames={transitionClassName}
           timeout={700}
           in={props.isOpen}
-          appear
-          mountOnEnter
-          unmountOnExit
         >
           <OptionListWrap>
             <OptionList>
@@ -157,6 +171,8 @@ const OptionListWrap = styled.div`
   width: 100%;
   position: absolute;
   left: 0;
+  opacity: 0;
+  pointer-events: none;
 
   &.${transitionClassName}-appear, &.${transitionClassName}-enter {
     opacity: 0;
@@ -168,10 +184,12 @@ const OptionListWrap = styled.div`
     opacity: 1;
     transform: translate(0, 20px);
     transition: transform 0.4s, opacity 0.4s;
+    pointer-events: auto;
   }
   &.${transitionClassName}-exit {
     opacity: 1;
     transform: translate(0, 20px);
+    pointer-events: auto;
   }
   &.${transitionClassName}-exit-active {
     opacity: 0;

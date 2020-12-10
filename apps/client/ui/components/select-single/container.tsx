@@ -21,6 +21,16 @@ type Props = {
 export const Component: React.VFC<Props> = (props) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [values, setValues] = React.useState<string[]>([]);
+  const menuItemRef = React.useRef<HTMLLIElement>(null);
+  const controlRef = React.useRef<HTMLDivElement>(null);
+
+  const focusOptionMenuItem = React.useCallback(() => {
+    menuItemRef.current && menuItemRef.current.focus();
+  }, [menuItemRef]);
+
+  const focusControl = React.useCallback(() => {
+    controlRef.current && controlRef.current.focus();
+  }, [controlRef]);
 
   const changeOpenStatus = React.useCallback(
     (openStatus: typeof isOpen) => {
@@ -31,24 +41,29 @@ export const Component: React.VFC<Props> = (props) => {
 
   const handleClickControlOpen = React.useCallback(() => {
     changeOpenStatus(true);
-  }, [changeOpenStatus]);
+    focusOptionMenuItem();
+  }, [changeOpenStatus, focusOptionMenuItem]);
   const handleClickControlClose = React.useCallback(() => {
     changeOpenStatus(false);
   }, [changeOpenStatus]);
 
   const handleKeyDownControlOpen = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
-      event.keyCode === ApplicationUtils.KeyCode.keyCode.Space &&
+      if (event.keyCode === ApplicationUtils.KeyCode.keyCode.Enter) {
         changeOpenStatus(true);
+        focusOptionMenuItem();
+      }
     },
-    [changeOpenStatus]
+    [changeOpenStatus, focusOptionMenuItem]
   );
   const handleKeyDownControlClose = React.useCallback(
-    (event: React.KeyboardEvent<HTMLLIElement>) => {
-      event.keyCode === ApplicationUtils.KeyCode.keyCode.Enter &&
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.keyCode === ApplicationUtils.KeyCode.keyCode.Enter) {
         changeOpenStatus(false);
+        focusControl();
+      }
     },
-    [changeOpenStatus]
+    [changeOpenStatus, focusControl]
   );
 
   const handleClickOptionListItem = React.useCallback(
@@ -79,10 +94,11 @@ export const Component: React.VFC<Props> = (props) => {
         callback: () => {
           setValues([event.currentTarget.dataset.value]);
           changeOpenStatus(false);
+          focusControl();
         },
       });
     },
-    [setValues, changeOpenStatus]
+    [setValues, changeOpenStatus, focusControl]
   );
 
   const handleClickResetValue = React.useCallback(() => {
@@ -115,6 +131,8 @@ export const Component: React.VFC<Props> = (props) => {
       handleKeyDownOptionListItem={handleKeyDownOptionListItem}
       handleClickResetValue={handleClickResetValue}
       handleEnterResetValue={handleEnterResetValue}
+      menuItemRef={menuItemRef}
+      controlRef={controlRef}
     />
   );
 };
