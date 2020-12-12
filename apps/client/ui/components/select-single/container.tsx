@@ -22,6 +22,11 @@ type Props = {
   isError?: boolean;
   disabled?: boolean;
   onChange: ChangeHandler;
+  values: string[];
+  /**
+   * ex) useState hooks setter
+   */
+  valuesUpdateHandler: (values: Props['values']) => void;
 };
 
 // ----------------------------------------
@@ -30,7 +35,7 @@ type Props = {
 
 export const Component: React.VFC<Props> = (props) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const [values, setValues] = React.useState<Values>([]);
+
   const menuItemRef = React.useRef<HTMLLIElement>(null);
   const controlRef = React.useRef<HTMLDivElement>(null);
 
@@ -82,10 +87,10 @@ export const Component: React.VFC<Props> = (props) => {
   const handleClickOptionListItem = React.useCallback(
     (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
       props.onChange([event.currentTarget.dataset.value]);
-      setValues([event.currentTarget.dataset.value]);
+      props.valuesUpdateHandler([event.currentTarget.dataset.value]);
       changeOpenStatus(false);
     },
-    [setValues, changeOpenStatus, props]
+    [changeOpenStatus, props]
   );
 
   const handleKeyDownOptionListItem = React.useCallback(
@@ -107,32 +112,13 @@ export const Component: React.VFC<Props> = (props) => {
         keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
         callback: () => {
           props.onChange([event.currentTarget.dataset.value]);
-          setValues([event.currentTarget.dataset.value]);
+          props.valuesUpdateHandler([event.currentTarget.dataset.value]);
           changeOpenStatus(false);
           focusControl();
         },
       });
     },
-    [setValues, changeOpenStatus, focusControl, props]
-  );
-
-  const handleClickResetValue = React.useCallback(() => {
-    props.onChange([]);
-    setValues([]);
-  }, [setValues, props]);
-
-  const handleEnterResetValue = React.useCallback(
-    (event: React.KeyboardEvent<HTMLButtonElement>) => {
-      Shared.Utils.Keys.keyDownHandler({
-        event,
-        keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
-        callback: () => {
-          props.onChange([]);
-          setValues([]);
-        },
-      });
-    },
-    [setValues, props]
+    [changeOpenStatus, focusControl, props]
   );
 
   React.useEffect(() => props.disabled && changeOpenStatus(false), [
@@ -151,11 +137,9 @@ export const Component: React.VFC<Props> = (props) => {
       handleClickControlClose={handleClickControlClose}
       handleKeyDownControlOpen={handleKeyDownControlOpen}
       handleKeyDownControlClose={handleKeyDownControlClose}
-      values={values}
+      values={props.values}
       handleClickOptionListItem={handleClickOptionListItem}
       handleKeyDownOptionListItem={handleKeyDownOptionListItem}
-      handleClickResetValue={handleClickResetValue}
-      handleEnterResetValue={handleEnterResetValue}
       menuItemRef={menuItemRef}
       controlRef={controlRef}
     />

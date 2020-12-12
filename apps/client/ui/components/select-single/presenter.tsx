@@ -40,10 +40,6 @@ type Props = {
   handleKeyDownOptionListItem: (
     event: React.KeyboardEvent<HTMLLIElement>
   ) => void;
-  handleClickResetValue: () => void;
-  handleEnterResetValue: (
-    event: React.KeyboardEvent<HTMLButtonElement>
-  ) => void;
   menuItemRef: React.MutableRefObject<HTMLLIElement>;
   controlRef: React.MutableRefObject<HTMLDivElement>;
 };
@@ -91,73 +87,59 @@ export const Component: React.VFC<Props> = (props) => {
   }, [props.options, props.values]);
 
   return (
-    <>
-      <Wrap>
-        <Control
-          ref={props.controlRef}
-          tabIndex={0}
-          isError={props.isError}
-          disabled={props.disabled}
-          onClick={
-            props.isOpen
-              ? props.handleClickControlClose
-              : props.handleClickControlOpen
-          }
-          onKeyDown={
-            props.isOpen
-              ? props.handleKeyDownControlClose
-              : props.handleKeyDownControlOpen
-          }
-        >
-          <HiddenInput value={props.values} aria-hidden tabIndex={-1} />
-          {props.values.length > 0 ? (
-            props.values[0]
-          ) : (
-            <Placeholder disabled={props.disabled}>
-              選択してください
-            </Placeholder>
-          )}
+    <Wrap>
+      <Control
+        ref={props.controlRef}
+        tabIndex={0}
+        isError={props.isError}
+        disabled={props.disabled}
+        onClick={
+          props.isOpen
+            ? props.handleClickControlClose
+            : props.handleClickControlOpen
+        }
+        onKeyDown={
+          props.isOpen
+            ? props.handleKeyDownControlClose
+            : props.handleKeyDownControlOpen
+        }
+      >
+        <HiddenInput value={props.values} aria-hidden tabIndex={-1} />
+        {props.values.length > 0 ? (
+          props.values[0]
+        ) : (
+          <Placeholder disabled={props.disabled}>選択してください</Placeholder>
+        )}
 
-          <OpenToggle>{props.isOpen ? 'CLOSE' : 'OPEN'}</OpenToggle>
-        </Control>
+        <OpenToggle>{props.isOpen ? 'CLOSE' : 'OPEN'}</OpenToggle>
+      </Control>
 
-        {props.isError && <ErrorText>{props.errorMessage}</ErrorText>}
+      {props.isError && <ErrorText>{props.errorMessage}</ErrorText>}
 
-        <CSSTransition
-          classNames={transitionClassName}
-          timeout={700}
-          in={props.isOpen}
-        >
-          <OptionListWrap>
-            <OptionList>
-              <ReactVirtualizedAutoSizer>
-                {({ height, width }) => (
-                  <ReactVirtualizedList
-                    tabIndex={-1}
-                    scrollToIndex={scrollToIndex}
-                    width={width}
-                    height={height}
-                    rowCount={props.options.length}
-                    rowHeight={40}
-                    rowRenderer={rowRenderer}
-                  />
-                )}
-              </ReactVirtualizedAutoSizer>
-            </OptionList>
-          </OptionListWrap>
-        </CSSTransition>
-      </Wrap>
-
-      <ButtonWrap>
-        <Button
-          type="button"
-          onClick={props.handleClickResetValue}
-          onKeyDown={props.handleEnterResetValue}
-        >
-          clear
-        </Button>
-      </ButtonWrap>
-    </>
+      <CSSTransition
+        classNames={transitionClassName}
+        timeout={700}
+        in={props.isOpen}
+      >
+        <OptionListWrap>
+          <OptionList>
+            <ReactVirtualizedAutoSizer>
+              {({ height, width }) => (
+                <ReactVirtualizedList
+                  tabIndex={-1}
+                  scrollToIndex={scrollToIndex}
+                  width={width}
+                  height={height}
+                  rowCount={props.options.length}
+                  rowHeight={40}
+                  rowRenderer={rowRenderer}
+                />
+              )}
+            </ReactVirtualizedAutoSizer>
+          </OptionList>
+        </OptionListWrap>
+      </CSSTransition>
+    </Wrap>
   );
 };
 
@@ -272,20 +254,4 @@ const OptionListItem = styled.li<OptionListItemProps>`
     outline: none;
     background-color: ${(props) => props.theme.colors.grey[400]};
   }
-`;
-
-const ButtonWrap = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  margin-top: ${(props) => props.theme.spacer(2)};
-`;
-const Button = styled.button`
-  cursor: pointer;
-  background-color: ${(props) => props.theme.colors.common.white};
-  border: 1px solid ${(props) => props.theme.colors.common.black};
-  border-radius: 6px;
-  font-weight: bold;
-  text-align: center;
-  padding: ${(props) => props.theme.spacer(2)}
-    ${(props) => props.theme.spacer(3)};
 `;
