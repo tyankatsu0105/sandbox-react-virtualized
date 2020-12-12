@@ -109,10 +109,13 @@ export const Component: React.VFC<Props> = (props) => {
               : props.handleKeyDownControlOpen
           }
         >
+          <HiddenInput value={props.values} aria-hidden tabIndex={-1} />
           {props.values.length > 0 ? (
             props.values[0]
           ) : (
-            <Placeholder>選択してください</Placeholder>
+            <Placeholder disabled={props.disabled}>
+              選択してください
+            </Placeholder>
           )}
 
           <OpenToggle>{props.isOpen ? 'CLOSE' : 'OPEN'}</OpenToggle>
@@ -176,6 +179,7 @@ const Control = styled.div<ControlProps>`
   border-color: ${(props) => props.isError && props.theme.colors.red[500]};
   height: 40px;
   cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
+  color: ${(props) => props.disabled && props.theme.colors.common.white};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -185,8 +189,23 @@ const Control = styled.div<ControlProps>`
     props.disabled && props.theme.colors.grey[600]};
 `;
 
-const Placeholder = styled.p`
-  color: ${(props) => props.theme.colors.grey[500]};
+const HiddenInput = styled.input`
+  width: 100%;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+`;
+
+type PlaceholderProps = {
+  disabled: Props['disabled'];
+};
+const Placeholder = styled.p<PlaceholderProps>`
+  color: ${(props) =>
+    props.disabled
+      ? props.theme.colors.common.white
+      : props.theme.colors.grey[500]};
 `;
 
 const OpenToggle = styled.div`

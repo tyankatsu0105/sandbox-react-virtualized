@@ -50,21 +50,24 @@ export const Component: React.VFC<Props> = (props) => {
   );
 
   const handleClickControlOpen = React.useCallback(() => {
+    if (props.disabled) return;
+
     changeOpenStatus(true);
     focusOptionMenuItem();
-  }, [changeOpenStatus, focusOptionMenuItem]);
+  }, [changeOpenStatus, focusOptionMenuItem, props.disabled]);
   const handleClickControlClose = React.useCallback(() => {
     changeOpenStatus(false);
   }, [changeOpenStatus]);
 
   const handleKeyDownControlOpen = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (props.disabled) return;
       if (event.keyCode === ApplicationUtils.KeyCode.keyCode.Enter) {
         changeOpenStatus(true);
         focusOptionMenuItem();
       }
     },
-    [changeOpenStatus, focusOptionMenuItem]
+    [changeOpenStatus, focusOptionMenuItem, props.disabled]
   );
   const handleKeyDownControlClose = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -131,6 +134,11 @@ export const Component: React.VFC<Props> = (props) => {
     },
     [setValues, props]
   );
+
+  React.useEffect(() => props.disabled && changeOpenStatus(false), [
+    props.disabled,
+    changeOpenStatus,
+  ]);
 
   return (
     <Presenter.Component
