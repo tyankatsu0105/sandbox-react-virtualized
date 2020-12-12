@@ -103,6 +103,10 @@ export const Component: React.VFC = () => {
           onChange={handleChange}
           values={selectSingleValues}
           valuesUpdateHandler={setSelectSingleValues}
+          inputProps={{
+            id: 'single-select',
+            name: 'single-select',
+          }}
         />
         <ButtonWrap>
           <Button

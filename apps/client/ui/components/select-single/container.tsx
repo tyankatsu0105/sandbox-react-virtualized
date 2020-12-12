@@ -14,6 +14,7 @@ export type ChangeHandler = (values: Values) => void;
 // props
 // ----------------------------------------
 type Props = {
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   options: {
     value: string;
     label: string;
@@ -142,6 +143,7 @@ export const Component: React.VFC<Props> = (props) => {
       handleKeyDownOptionListItem={handleKeyDownOptionListItem}
       menuItemRef={menuItemRef}
       controlRef={controlRef}
+      inputProps={props.inputProps}
     />
   );
 };

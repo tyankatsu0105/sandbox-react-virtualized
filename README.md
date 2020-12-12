@@ -11,5 +11,8 @@
 
 # Todo
 - [ ] selectorのoption list
+  - [x] single
+  - [ ] multiple
+- [ ] date
 - [ ] list
 - [ ] table

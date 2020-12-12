@@ -17,6 +17,7 @@ const transitionClassName = 'fade';
 // props
 // ----------------------------------------
 type Props = {
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
   options: {
     value: string;
     label: string;
@@ -104,7 +105,12 @@ export const Component: React.VFC<Props> = (props) => {
             : props.handleKeyDownControlOpen
         }
       >
-        <HiddenInput value={props.values} aria-hidden tabIndex={-1} />
+        <HiddenInput
+          value={props.values}
+          aria-hidden
+          tabIndex={-1}
+          {...props.inputProps}
+        />
         {props.values.length > 0 ? (
           props.values[0]
         ) : (
