@@ -21,6 +21,9 @@ type Props = {
     value: string;
     label: string;
   }[];
+  errorMessage?: string;
+  isError?: boolean;
+  disabled?: boolean;
   isOpen: boolean;
   handleClickControlOpen: () => void;
   handleClickControlClose: () => void;
@@ -93,6 +96,8 @@ export const Component: React.VFC<Props> = (props) => {
         <Control
           ref={props.controlRef}
           tabIndex={0}
+          isError={props.isError}
+          disabled={props.disabled}
           onClick={
             props.isOpen
               ? props.handleClickControlClose
@@ -112,6 +117,8 @@ export const Component: React.VFC<Props> = (props) => {
 
           <OpenToggle>{props.isOpen ? 'CLOSE' : 'OPEN'}</OpenToggle>
         </Control>
+
+        {props.isError && <ErrorText>{props.errorMessage}</ErrorText>}
 
         <CSSTransition
           classNames={transitionClassName}
@@ -159,15 +166,23 @@ const Wrap = styled.div`
   position: relative;
 `;
 
-const Control = styled.div`
+type ControlProps = {
+  isError: Props['isError'];
+  disabled: Props['disabled'];
+};
+const Control = styled.div<ControlProps>`
   border-radius: 6px;
   border: 1px solid ${(props) => props.theme.colors.common.black};
+  border-color: ${(props) => props.isError && props.theme.colors.red[500]};
   height: 40px;
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: ${(props) => props.theme.spacer(2)};
+
+  background-color: ${(props) =>
+    props.disabled && props.theme.colors.grey[600]};
 `;
 
 const Placeholder = styled.p`
@@ -176,6 +191,11 @@ const Placeholder = styled.p`
 
 const OpenToggle = styled.div`
   padding-left: ${(props) => props.theme.spacer(4)};
+`;
+
+const ErrorText = styled.p`
+  margin-top: ${(props) => props.theme.spacer(1)};
+  color: ${(props) => props.theme.colors.red[500]};
 `;
 
 const OptionListWrap = styled.div`

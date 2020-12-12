@@ -33,6 +33,7 @@ A couple of things to watch out for:
     /* Browsers have different default form fonts */
     font-size: 13px;
     font-family: Arial;
+    box-sizing: border-box;
   }
 
   /* Remove the stupid outer glow in Webkit */
@@ -46,9 +47,7 @@ A couple of things to watch out for:
   /* All of our custom controls should be what we expect them to be */
   input,
   textarea {
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
+    box-sizing: border-box;
   }
 
   /* These elements are usually rendered a certain way by the browser */
