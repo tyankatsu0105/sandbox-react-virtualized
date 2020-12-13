@@ -90,8 +90,9 @@ export const Component: React.VFC<Props> = (props) => {
       props.onChange([event.currentTarget.dataset.value]);
       props.valuesUpdateHandler([event.currentTarget.dataset.value]);
       changeOpenStatus(false);
+      focusControl();
     },
-    [changeOpenStatus, props]
+    [changeOpenStatus, props, focusControl]
   );
 
   const handleKeyDownOptionListItem = React.useCallback(
