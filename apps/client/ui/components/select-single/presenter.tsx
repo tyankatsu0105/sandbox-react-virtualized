@@ -36,12 +36,12 @@ type Props = {
   ) => void;
   values: string[];
   handleClickOptionListItem: (
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   handleKeyDownOptionListItem: (
-    event: React.KeyboardEvent<HTMLLIElement>
+    event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
-  menuItemRef: React.MutableRefObject<HTMLLIElement>;
+  menuItemRef: React.MutableRefObject<HTMLDivElement>;
   controlRef: React.MutableRefObject<HTMLDivElement>;
 };
 
@@ -239,14 +239,14 @@ const OptionListWrap = styled.div`
   }
 `;
 
-const OptionList = styled.ul`
+const OptionList = styled.div`
   height: 300px;
 `;
 
 type OptionListItemProps = {
   isSelected: boolean;
 };
-const OptionListItem = styled.li<OptionListItemProps>`
+const OptionListItem = styled.div<OptionListItemProps>`
   cursor: pointer;
   background-color: ${(props) =>
     props.isSelected && props.theme.colors.lightGreen[400]};

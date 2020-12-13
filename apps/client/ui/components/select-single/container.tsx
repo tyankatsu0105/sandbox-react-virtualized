@@ -37,7 +37,7 @@ type Props = {
 export const Component: React.VFC<Props> = (props) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
-  const menuItemRef = React.useRef<HTMLLIElement>(null);
+  const menuItemRef = React.useRef<HTMLDivElement>(null);
   const controlRef = React.useRef<HTMLDivElement>(null);
 
   const focusOptionMenuItem = React.useCallback(() => {
@@ -86,7 +86,7 @@ export const Component: React.VFC<Props> = (props) => {
   );
 
   const handleClickOptionListItem = React.useCallback(
-    (event: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       props.onChange([event.currentTarget.dataset.value]);
       props.valuesUpdateHandler([event.currentTarget.dataset.value]);
       changeOpenStatus(false);
@@ -96,17 +96,17 @@ export const Component: React.VFC<Props> = (props) => {
   );
 
   const handleKeyDownOptionListItem = React.useCallback(
-    (event: React.KeyboardEvent<HTMLLIElement>) => {
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
       Shared.Utils.Keys.moveFocus({
         event,
         keyCode: ApplicationUtils.KeyCode.keyCode.ArrowUp,
-        element: event.currentTarget.previousElementSibling as HTMLLIElement,
+        element: event.currentTarget.previousElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.moveFocus({
         event,
         keyCode: ApplicationUtils.KeyCode.keyCode.ArrowDown,
-        element: event.currentTarget.nextElementSibling as HTMLLIElement,
+        element: event.currentTarget.nextElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.keyDownHandler({
