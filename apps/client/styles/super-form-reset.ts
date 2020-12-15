@@ -37,9 +37,9 @@ A couple of things to watch out for:
   }
 
   /* Remove the stupid outer glow in Webkit */
-  input:focus {
+  /* input:focus {
     outline: 0;
-  }
+  } */
 
   /* Box Sizing Reset
 -----------------------------------------------*/

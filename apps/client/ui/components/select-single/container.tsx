@@ -35,6 +35,7 @@ type Props = {
 // ----------------------------------------
 
 export const Component: React.VFC<Props> = (props) => {
+  const { componentWrapRef, isClickOutside } = Shared.Hooks.useClickOutSide();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   const menuItemRef = React.useRef<HTMLDivElement>(null);
@@ -128,6 +129,11 @@ export const Component: React.VFC<Props> = (props) => {
     changeOpenStatus,
   ]);
 
+  React.useEffect(() => isClickOutside && setIsOpen(false), [
+    isClickOutside,
+    setIsOpen,
+  ]);
+
   return (
     <Presenter.Component
       options={props.options}
@@ -145,6 +151,7 @@ export const Component: React.VFC<Props> = (props) => {
       menuItemRef={menuItemRef}
       controlRef={controlRef}
       inputProps={props.inputProps}
+      componentWrapRef={componentWrapRef}
     />
   );
 };

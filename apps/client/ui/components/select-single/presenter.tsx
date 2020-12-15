@@ -43,6 +43,7 @@ type Props = {
   ) => void;
   menuItemRef: React.MutableRefObject<HTMLDivElement>;
   controlRef: React.MutableRefObject<HTMLDivElement>;
+  componentWrapRef: React.MutableRefObject<any>;
 };
 
 // ----------------------------------------
@@ -88,7 +89,7 @@ export const Component: React.VFC<Props> = (props) => {
   }, [props.options, props.values]);
 
   return (
-    <Wrap>
+    <Wrap ref={props.componentWrapRef}>
       <Control
         ref={props.controlRef}
         tabIndex={0}
