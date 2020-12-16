@@ -214,6 +214,7 @@ const OptionListWrap = styled.div`
   position: absolute;
   left: 0;
   opacity: 0;
+  z-index: 1;
   pointer-events: none;
 
   &.${transitionClassName}-appear, &.${transitionClassName}-enter {
@@ -250,7 +251,7 @@ type OptionListItemProps = {
 const OptionListItem = styled.div<OptionListItemProps>`
   cursor: pointer;
   background-color: ${(props) =>
-    props.isSelected && props.theme.colors.lightGreen[400]};
+    props.isSelected && props.theme.colors.grey[300]};
   padding: ${(props) => props.theme.spacer(2)}
     ${(props) => props.theme.spacer(3)} ${(props) => props.theme.spacer(2)}
     ${(props) => props.theme.spacer(3)};
