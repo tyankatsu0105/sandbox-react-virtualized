@@ -10,6 +10,8 @@ import styled from 'styled-components';
 
 import * as Atoms from '~client/ui/atoms';
 
+import { Option } from './container';
+
 // ----------------------------------------
 // helpers
 // ----------------------------------------
@@ -21,10 +23,7 @@ type Icon = keyof typeof Atoms.Icon.icons;
 // ----------------------------------------
 type Props = {
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  options: {
-    value: string;
-    label: string;
-  }[];
+  options: Option[];
   errorMessage?: string;
   isError?: boolean;
   disabled?: boolean;
@@ -37,22 +36,26 @@ type Props = {
   handleKeyDownControlClose: (
     event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
-  values: string[];
-  handleClickOptionListItem: (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => void;
-  handleKeyDownOptionListItem: (
-    event: React.KeyboardEvent<HTMLDivElement>
-  ) => void;
+  selectedOptions: Option[];
+  handleClickOptionListItem: (params: {
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>;
+    option: Props['options'][number];
+  }) => void;
+  handleKeyDownOptionListItem: (params: {
+    event: React.KeyboardEvent<HTMLDivElement>;
+    option: Props['options'][number];
+  }) => void;
   menuItemRef: React.MutableRefObject<HTMLDivElement>;
   controlRef: React.MutableRefObject<HTMLDivElement>;
   componentWrapRef: React.MutableRefObject<any>;
-  handleClickRemoveItemButton: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void;
-  handleKeyDownRemoveItemButton: (
-    event: React.KeyboardEvent<HTMLButtonElement>
-  ) => void;
+  handleClickRemoveItemButton: (params: {
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>;
+    option: Props['options'][number];
+  }) => void;
+  handleKeyDownRemoveItemButton: (params: {
+    event: React.KeyboardEvent<HTMLButtonElement>;
+    option: Props['options'][number];
+  }) => void;
 };
 
 // ----------------------------------------
@@ -63,13 +66,18 @@ export const Component: React.VFC<Props> = (props) => {
   const rowRenderer = (rowRendererProps: ReactVirtualizedListRowProps) => {
     const option = props.options[rowRendererProps.index];
     const tabIndex = props.isOpen ? 0 : -1;
-    const isSelected = props.values.includes(option.value);
+    const isSelected = props.selectedOptions.some(
+      (selectedOption) => selectedOption.value === option.value
+    );
 
     const createRef = () => {
       if (rowRendererProps.index === 0) return props.menuItemRef;
       if (props.menuItemRef.current == null && rowRendererProps.index === 0)
         return props.menuItemRef;
-      if (option.value === props.values[props.values.length - 1])
+      if (
+        option.value ===
+        props.selectedOptions[props.selectedOptions.length - 1]?.value
+      )
         return props.menuItemRef;
     };
 
@@ -81,9 +89,10 @@ export const Component: React.VFC<Props> = (props) => {
         key={rowRendererProps.key}
         style={rowRendererProps.style}
         tabIndex={tabIndex}
-        data-value={option.value}
-        onClick={props.handleClickOptionListItem}
-        onKeyDown={props.handleKeyDownOptionListItem}
+        onClick={(event) => props.handleClickOptionListItem({ event, option })}
+        onKeyDown={(event) =>
+          props.handleKeyDownOptionListItem({ event, option })
+        }
         isSelected={isSelected}
       >
         <OptionListItemIconWrap>
@@ -96,13 +105,15 @@ export const Component: React.VFC<Props> = (props) => {
   };
 
   const scrollToIndex = React.useMemo(() => {
-    if (props.values.length === 0) return 0;
+    if (props.selectedOptions.length === 0) return 0;
 
     const index = props.options.findIndex(
-      (option) => option.value === props.values[props.values.length - 1]
+      (option) =>
+        option.value ===
+        props.selectedOptions[props.selectedOptions.length - 1].value
     );
     return index;
-  }, [props.options, props.values]);
+  }, [props.options, props.selectedOptions]);
 
   return (
     <Wrap ref={props.componentWrapRef}>
@@ -123,23 +134,34 @@ export const Component: React.VFC<Props> = (props) => {
         }
       >
         <HiddenInput
-          value={props.values}
+          value={props.selectedOptions.map(
+            (selectedOption) => selectedOption.value
+          )}
           aria-hidden
           tabIndex={-1}
           {...props.inputProps}
         />
-        {props.values.length > 0 ? (
+        {props.selectedOptions.length > 0 ? (
           <SelectValueWrap
             onClick={(event) => event.stopPropagation()}
             onKeyDown={(event) => event.stopPropagation()}
           >
-            {props.values.map((value) => (
+            {props.selectedOptions.map((selectedOption) => (
               <SelectValue>
-                <SelectValueLabel>{value}</SelectValueLabel>
+                <SelectValueLabel>{selectedOption.label}</SelectValueLabel>
                 <SelectValueButton
-                  data-value={value}
-                  onClick={props.handleClickRemoveItemButton}
-                  onKeyDown={props.handleKeyDownRemoveItemButton}
+                  onClick={(event) =>
+                    props.handleClickRemoveItemButton({
+                      event,
+                      option: selectedOption,
+                    })
+                  }
+                  onKeyDown={(event) =>
+                    props.handleKeyDownRemoveItemButton({
+                      event,
+                      option: selectedOption,
+                    })
+                  }
                 >
                   <Atoms.Icon.Component
                     icon="close"

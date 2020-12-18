@@ -7,27 +7,39 @@ import * as Shared from '~client/shared';
 // ----------------------------------------
 // types
 // ----------------------------------------
-export type Values = string[];
-export type ChangeHandler = (values: Values) => void;
+export type Option = {
+  value: string;
+  label: string;
+};
+export type ChangeHandler = (options: Option[]) => void;
 
 // ----------------------------------------
 // props
 // ----------------------------------------
 type Props = {
+  /**
+   * props to input element
+   */
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  options: {
-    value: string;
-    label: string;
-  }[];
+
+  /**
+   * options
+   * @example options = [{label: 'label-1', value: '1'}]
+   */
+  options: Option[];
+
+  /**
+   * Error message when isError is true
+   */
   errorMessage?: string;
   isError?: boolean;
   disabled?: boolean;
   onChange: ChangeHandler;
-  values: string[];
+  selectedOptions: Option[];
   /**
    * ex) useState hooks setter
    */
-  valuesUpdateHandler: (values: Props['values']) => void;
+  selectedOptionsUpdateHandler: (options: Props['selectedOptions']) => void;
 };
 
 // ----------------------------------------
@@ -87,18 +99,26 @@ export const Component: React.VFC<Props> = (props) => {
   );
 
   const handleClickOptionListItem = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-      props.onChange([event.currentTarget.dataset.value]);
-      if (props.values.includes(event.currentTarget.dataset.value)) {
-        props.valuesUpdateHandler(
-          props.values.filter(
-            (value) => value !== event.currentTarget.dataset.value
+    (params: {
+      event: React.MouseEvent<HTMLDivElement, MouseEvent>;
+      option: Props['options'][number];
+    }) => {
+      props.onChange([params.option]);
+
+      if (
+        props.selectedOptions.some(
+          (selectedOption) => selectedOption.value === params.option.value
+        )
+      ) {
+        props.selectedOptionsUpdateHandler(
+          props.selectedOptions.filter(
+            (selectedOption) => selectedOption.value !== params.option.value
           )
         );
       } else {
-        props.valuesUpdateHandler([
-          ...props.values,
-          event.currentTarget.dataset.value,
+        props.selectedOptionsUpdateHandler([
+          ...props.selectedOptions,
+          params.option,
         ]);
       }
     },
@@ -106,34 +126,43 @@ export const Component: React.VFC<Props> = (props) => {
   );
 
   const handleKeyDownOptionListItem = React.useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
+    (params: {
+      event: React.KeyboardEvent<HTMLDivElement>;
+      option: Props['options'][number];
+    }) => {
       Shared.Utils.Keys.moveFocus({
-        event,
+        event: params.event,
         keyCode: ApplicationUtils.KeyCode.keyCode.ArrowUp,
-        element: event.currentTarget.previousElementSibling as HTMLDivElement,
+        element: params.event.currentTarget
+          .previousElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.moveFocus({
-        event,
+        event: params.event,
         keyCode: ApplicationUtils.KeyCode.keyCode.ArrowDown,
-        element: event.currentTarget.nextElementSibling as HTMLDivElement,
+        element: params.event.currentTarget
+          .nextElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.keyDownHandler({
-        event,
+        event: params.event,
         keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
         callback: () => {
-          props.onChange([event.currentTarget.dataset.value]);
-          if (props.values.includes(event.currentTarget.dataset.value)) {
-            props.valuesUpdateHandler(
-              props.values.filter(
-                (value) => value !== event.currentTarget.dataset.value
+          props.onChange([params.option]);
+          if (
+            props.selectedOptions.some(
+              (selectedOption) => selectedOption.value === params.option.value
+            )
+          ) {
+            props.selectedOptionsUpdateHandler(
+              props.selectedOptions.filter(
+                (selectedOption) => selectedOption.value !== params.option.value
               )
             );
           } else {
-            props.valuesUpdateHandler([
-              ...props.values,
-              event.currentTarget.dataset.value,
+            props.selectedOptionsUpdateHandler([
+              ...props.selectedOptions,
+              params.option,
             ]);
           }
         },
@@ -143,10 +172,13 @@ export const Component: React.VFC<Props> = (props) => {
   );
 
   const handleClickRemoveItemButton = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-      props.valuesUpdateHandler(
-        props.values.filter(
-          (value) => value !== event.currentTarget.dataset.value
+    (params: {
+      event: React.MouseEvent<HTMLButtonElement, MouseEvent>;
+      option: Props['options'][number];
+    }) => {
+      props.selectedOptionsUpdateHandler(
+        props.selectedOptions.filter(
+          (selectedOption) => selectedOption.value !== params.option.value
         )
       );
     },
@@ -154,14 +186,17 @@ export const Component: React.VFC<Props> = (props) => {
   );
 
   const handleKeyDownRemoveItemButton = React.useCallback(
-    (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    (params: {
+      event: React.KeyboardEvent<HTMLButtonElement>;
+      option: Props['options'][number];
+    }) => {
       Shared.Utils.Keys.keyDownHandler({
-        event,
+        event: params.event,
         keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
         callback: () => {
-          props.valuesUpdateHandler(
-            props.values.filter(
-              (value) => value !== event.currentTarget.dataset.value
+          props.selectedOptionsUpdateHandler(
+            props.selectedOptions.filter(
+              (selectedOption) => selectedOption.value !== params.option.value
             )
           );
         },
@@ -191,7 +226,7 @@ export const Component: React.VFC<Props> = (props) => {
       handleClickControlClose={handleClickControlClose}
       handleKeyDownControlOpen={handleKeyDownControlOpen}
       handleKeyDownControlClose={handleKeyDownControlClose}
-      values={props.values}
+      selectedOptions={props.selectedOptions}
       handleClickOptionListItem={handleClickOptionListItem}
       handleKeyDownOptionListItem={handleKeyDownOptionListItem}
       menuItemRef={menuItemRef}

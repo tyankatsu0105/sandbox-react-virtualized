@@ -26,8 +26,11 @@ export const Component: React.VFC = () => {
   const [selectSingleValues, setSelectSingleValues] = React.useState<string[]>(
     []
   );
-  const [selectMultipleValues, setSelectMultipleValues] = React.useState<
-    string[]
+  const [selectedOptionsMultiple, setSelectedOptionsMultiple] = React.useState<
+    {
+      value: string;
+      label: string;
+    }[]
   >([]);
 
   const [selectSingleIsError, setSelectSingleIsError] = React.useState<boolean>(
@@ -53,9 +56,9 @@ export const Component: React.VFC = () => {
   );
   const handleChangeMultipleValue: Components.SelectMultiple.ChangeHandler = React.useCallback(
     (values) => {
-      setSelectMultipleValues([...values]);
+      setSelectedOptionsMultiple([...values]);
     },
-    [setSelectMultipleValues]
+    [setSelectedOptionsMultiple]
   );
 
   const handleSingleErrorChange = React.useCallback(
@@ -90,8 +93,8 @@ export const Component: React.VFC = () => {
   }, [setSelectSingleValues, handleChangeSingleValue]);
   const handleClickResetMultipleValue = React.useCallback(() => {
     handleChangeMultipleValue([]);
-    setSelectMultipleValues([]);
-  }, [setSelectMultipleValues, handleChangeMultipleValue]);
+    setSelectedOptionsMultiple([]);
+  }, [setSelectedOptionsMultiple, handleChangeMultipleValue]);
 
   const handleEnterResetSingleValue = React.useCallback(
     (event: React.KeyboardEvent<HTMLButtonElement>) => {
@@ -113,11 +116,11 @@ export const Component: React.VFC = () => {
         keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
         callback: () => {
           handleChangeMultipleValue([]);
-          setSelectMultipleValues([]);
+          setSelectedOptionsMultiple([]);
         },
       });
     },
-    [setSelectMultipleValues, handleChangeMultipleValue]
+    [setSelectedOptionsMultiple, handleChangeMultipleValue]
   );
 
   return (
@@ -200,8 +203,8 @@ export const Component: React.VFC = () => {
           disabled={selectMultipleIsDisabled}
           errorMessage={'error!!!!!!!'}
           onChange={handleChangeMultipleValue}
-          values={selectMultipleValues}
-          valuesUpdateHandler={setSelectMultipleValues}
+          selectedOptions={selectedOptionsMultiple}
+          selectedOptionsUpdateHandler={setSelectedOptionsMultiple}
           inputProps={{
             id: 'multiple-select',
             name: 'multiple-select',
@@ -216,7 +219,7 @@ export const Component: React.VFC = () => {
             clear
           </Button>
         </ButtonWrap>
-        values: {JSON.stringify(selectMultipleValues, null, 2)}
+        values: {JSON.stringify(selectedOptionsMultiple, null, 2)}
       </Section>
     </Wrapper>
   );

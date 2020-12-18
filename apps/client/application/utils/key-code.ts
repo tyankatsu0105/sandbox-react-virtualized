@@ -1,5 +1,10 @@
+/**
+ * FIXME: keyかcodeで書き換える
+ * keycodeはdeprecatedになっているため
+ */
 export const keyCode = {
   Enter: 13,
+  Space: 32,
   ArrowUp: 38,
   ArrowDown: 40,
 } as const;
