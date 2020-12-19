@@ -23,6 +23,5 @@ type KeyDownHandlerParams = {
   callback: () => void;
 };
 export const keyDownHandler = (params: KeyDownHandlerParams) => {
-  // params.event.preventDefault();
   params.event.keyCode === params.keyCode && params.callback();
 };

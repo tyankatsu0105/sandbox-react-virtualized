@@ -147,7 +147,7 @@ export const Component: React.VFC<Props> = (props) => {
             onKeyDown={(event) => event.stopPropagation()}
           >
             {props.selectedOptions.map((selectedOption) => (
-              <SelectValue>
+              <SelectValue key={selectedOption.value}>
                 <SelectValueLabel>{selectedOption.label}</SelectValueLabel>
                 <SelectValueButton
                   onClick={(event) =>
