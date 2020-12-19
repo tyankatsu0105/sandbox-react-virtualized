@@ -109,64 +109,60 @@ export const Component: React.VFC<Props> = (props) => {
   );
 
   const handleClickOptionListItem = React.useCallback(
-    (params: {
-      event: React.MouseEvent<HTMLDivElement, MouseEvent>;
-      option: Props['options'][number];
-    }) => {
-      props.onChange([params.option]);
+    (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const option = JSON.parse(event.currentTarget.dataset.option) as Option;
+
+      props.onChange([option]);
       if (
         selectedOptions.some(
-          (selectedOption) => selectedOption.value === params.option.value
+          (selectedOption) => selectedOption.value === option.value
         )
       ) {
         setSelectedOptions(
           selectedOptions.filter(
-            (selectedOption) => selectedOption.value !== params.option.value
+            (selectedOption) => selectedOption.value !== option.value
           )
         );
       } else {
-        setSelectedOptions([...selectedOptions, params.option]);
+        setSelectedOptions([...selectedOptions, option]);
       }
     },
     [props, selectedOptions, setSelectedOptions]
   );
 
   const handleKeyDownOptionListItem = React.useCallback(
-    (params: {
-      event: React.KeyboardEvent<HTMLDivElement>;
-      option: Props['options'][number];
-    }) => {
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      const option = JSON.parse(event.currentTarget.dataset.option) as Option;
+
       Shared.Utils.Keys.moveFocus({
-        event: params.event,
+        event,
         keyCode: ApplicationUtils.KeyCode.keyCode.ArrowUp,
-        element: params.event.currentTarget
-          .previousElementSibling as HTMLDivElement,
+        element: event.currentTarget.previousElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.moveFocus({
-        event: params.event,
+        event,
         keyCode: ApplicationUtils.KeyCode.keyCode.ArrowDown,
-        element: params.event.currentTarget
-          .nextElementSibling as HTMLDivElement,
+        element: event.currentTarget.nextElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.keyDownHandler({
-        event: params.event,
+        event,
         keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
         callback: () => {
-          props.onChange([params.option]);
+          props.onChange([option]);
           if (
             selectedOptions.some(
-              (selectedOption) => selectedOption.value === params.option.value
+              (selectedOption) => selectedOption.value === option.value
             )
           ) {
             setSelectedOptions(
               selectedOptions.filter(
-                (selectedOption) => selectedOption.value !== params.option.value
+                (selectedOption) => selectedOption.value !== option.value
               )
             );
           } else {
-            setSelectedOptions([...selectedOptions, params.option]);
+            setSelectedOptions([...selectedOptions, option]);
           }
         },
       });
@@ -175,14 +171,13 @@ export const Component: React.VFC<Props> = (props) => {
   );
 
   const handleClickRemoveItemButton = React.useCallback(
-    (params: {
-      event: React.MouseEvent<HTMLButtonElement, MouseEvent>;
-      option: Props['options'][number];
-    }) => {
-      props.onChangeRemove([params.option]);
+    (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      const option = JSON.parse(event.currentTarget.dataset.option) as Option;
+
+      props.onChangeRemove([option]);
       setSelectedOptions(
         selectedOptions.filter(
-          (selectedOption) => selectedOption.value !== params.option.value
+          (selectedOption) => selectedOption.value !== option.value
         )
       );
     },
@@ -190,18 +185,17 @@ export const Component: React.VFC<Props> = (props) => {
   );
 
   const handleKeyDownRemoveItemButton = React.useCallback(
-    (params: {
-      event: React.KeyboardEvent<HTMLButtonElement>;
-      option: Props['options'][number];
-    }) => {
+    (event: React.KeyboardEvent<HTMLButtonElement>) => {
+      const option = JSON.parse(event.currentTarget.dataset.option) as Option;
+
       Shared.Utils.Keys.keyDownHandler({
-        event: params.event,
+        event: event,
         keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
         callback: () => {
-          props.onChangeRemove([params.option]);
+          props.onChangeRemove([option]);
           setSelectedOptions(
             selectedOptions.filter(
-              (selectedOption) => selectedOption.value !== params.option.value
+              (selectedOption) => selectedOption.value !== option.value
             )
           );
         },

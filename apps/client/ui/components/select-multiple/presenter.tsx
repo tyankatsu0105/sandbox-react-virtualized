@@ -37,25 +37,21 @@ type Props = {
     event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
   selectedOptions: Option[];
-  handleClickOptionListItem: (params: {
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>;
-    option: Props['options'][number];
-  }) => void;
-  handleKeyDownOptionListItem: (params: {
-    event: React.KeyboardEvent<HTMLDivElement>;
-    option: Props['options'][number];
-  }) => void;
+  handleClickOptionListItem: (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => void;
+  handleKeyDownOptionListItem: (
+    event: React.KeyboardEvent<HTMLDivElement>
+  ) => void;
   menuItemRef: React.MutableRefObject<HTMLDivElement>;
   controlRef: React.MutableRefObject<HTMLDivElement>;
   componentWrapRef: React.MutableRefObject<any>;
-  handleClickRemoveItemButton: (params: {
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>;
-    option: Props['options'][number];
-  }) => void;
-  handleKeyDownRemoveItemButton: (params: {
-    event: React.KeyboardEvent<HTMLButtonElement>;
-    option: Props['options'][number];
-  }) => void;
+  handleClickRemoveItemButton: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => void;
+  handleKeyDownRemoveItemButton: (
+    event: React.KeyboardEvent<HTMLButtonElement>
+  ) => void;
 };
 
 // ----------------------------------------
@@ -89,10 +85,9 @@ export const Component: React.VFC<Props> = (props) => {
         key={rowRendererProps.key}
         style={rowRendererProps.style}
         tabIndex={tabIndex}
-        onClick={(event) => props.handleClickOptionListItem({ event, option })}
-        onKeyDown={(event) =>
-          props.handleKeyDownOptionListItem({ event, option })
-        }
+        onClick={props.handleClickOptionListItem}
+        onKeyDown={props.handleKeyDownOptionListItem}
+        data-option={JSON.stringify(option)}
         isSelected={isSelected}
       >
         <OptionListItemIconWrap>
@@ -150,18 +145,9 @@ export const Component: React.VFC<Props> = (props) => {
               <SelectValue key={selectedOption.value}>
                 <SelectValueLabel>{selectedOption.label}</SelectValueLabel>
                 <SelectValueButton
-                  onClick={(event) =>
-                    props.handleClickRemoveItemButton({
-                      event,
-                      option: selectedOption,
-                    })
-                  }
-                  onKeyDown={(event) =>
-                    props.handleKeyDownRemoveItemButton({
-                      event,
-                      option: selectedOption,
-                    })
-                  }
+                  data-option={JSON.stringify(selectedOption)}
+                  onClick={props.handleClickRemoveItemButton}
+                  onKeyDown={props.handleKeyDownRemoveItemButton}
                 >
                   <Atoms.Icon.Component
                     icon="close"
