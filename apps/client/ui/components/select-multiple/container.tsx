@@ -53,12 +53,6 @@ export const Component: React.VFC<Props> = (props) => {
   const { componentWrapRef, isClickOutside } = Shared.Hooks.useClickOutSide();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [selectedOptions, setSelectedOptions] = React.useState<Option[]>([]);
-  const updateSelectedOptions = React.useCallback(
-    (options: Option[]) => {
-      setSelectedOptions([...options]);
-    },
-    [setSelectedOptions]
-  );
 
   const menuItemRef = React.useRef<HTMLDivElement>(null);
   const controlRef = React.useRef<HTMLDivElement>(null);
@@ -213,6 +207,22 @@ export const Component: React.VFC<Props> = (props) => {
     isClickOutside,
     setIsOpen,
   ]);
+
+  const handleKeyDownEscape = React.useCallback(
+    (event: KeyboardEvent) => {
+      isOpen &&
+        event.key === ApplicationUtils.Key.key.Escape &&
+        setIsOpen(false);
+    },
+    [isOpen]
+  );
+
+  React.useEffect(() => {
+    document.addEventListener('keydown', handleKeyDownEscape, true);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDownEscape, true);
+    };
+  }, [handleKeyDownEscape]);
 
   return (
     <Presenter.Component

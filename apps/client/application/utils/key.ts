@@ -5,6 +5,7 @@
 export const key = {
   Enter: 'Enter',
   Space: ' ',
+  Escape: 'Escape',
   ArrowUp: 'ArrowUp',
   ArrowDown: 'ArrowDown',
 } as const;

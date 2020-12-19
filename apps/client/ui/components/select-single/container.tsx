@@ -134,6 +134,22 @@ export const Component: React.VFC<Props> = (props) => {
     setIsOpen,
   ]);
 
+  const handleKeyDownEscape = React.useCallback(
+    (event: KeyboardEvent) => {
+      isOpen &&
+        event.key === ApplicationUtils.Key.key.Escape &&
+        setIsOpen(false);
+    },
+    [isOpen]
+  );
+
+  React.useEffect(() => {
+    document.addEventListener('keydown', handleKeyDownEscape, true);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDownEscape, true);
+    };
+  }, [handleKeyDownEscape]);
+
   return (
     <Presenter.Component
       options={props.options}
