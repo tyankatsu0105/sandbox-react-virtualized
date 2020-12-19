@@ -1,1 +1,1 @@
-export * as KeyCode from './key-code';
+export * as Key from './key';

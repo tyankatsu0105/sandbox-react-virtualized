@@ -125,7 +125,7 @@ export const Component: React.VFC = () => {
     (event: React.KeyboardEvent<HTMLButtonElement>) => {
       Shared.Utils.Keys.keyDownHandler({
         event,
-        keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
+        key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           handleChangeSingleValue([]);
           setSelectSingleValues([]);
@@ -138,7 +138,7 @@ export const Component: React.VFC = () => {
     (event: React.KeyboardEvent<HTMLButtonElement>) => {
       Shared.Utils.Keys.keyDownHandler({
         event,
-        keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
+        key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           handleChangeMultipleValue([]);
           setSelectedOptionsMultiple([]);

@@ -2,7 +2,7 @@ import * as ApplicationUtils from '~client/application/utils';
 
 type MoveFocusParams<E> = {
   event: React.KeyboardEvent;
-  keyCode: ApplicationUtils.KeyCode.KeyCode;
+  key: ApplicationUtils.Key.Key;
   element: E;
 };
 /**
@@ -11,7 +11,7 @@ type MoveFocusParams<E> = {
 export const moveFocus = <E extends HTMLOrSVGElement>(
   params: MoveFocusParams<E>
 ) => {
-  if (params.event.keyCode === params.keyCode && params.element) {
+  if (params.event.key === params.key && params.element) {
     params.event.preventDefault();
     params.element.focus();
   }
@@ -19,9 +19,9 @@ export const moveFocus = <E extends HTMLOrSVGElement>(
 
 type KeyDownHandlerParams = {
   event: React.KeyboardEvent;
-  keyCode: ApplicationUtils.KeyCode.KeyCode;
+  key: ApplicationUtils.Key.Key;
   callback: () => void;
 };
 export const keyDownHandler = (params: KeyDownHandlerParams) => {
-  params.event.keyCode === params.keyCode && params.callback();
+  params.event.key === params.key && params.callback();
 };

@@ -91,7 +91,7 @@ export const Component: React.VFC<Props> = (props) => {
   const handleKeyDownControlOpen = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (props.disabled) return;
-      if (event.keyCode === ApplicationUtils.KeyCode.keyCode.Enter) {
+      if (event.key === ApplicationUtils.Key.key.Enter) {
         changeOpenStatus(true);
         focusOptionMenuItem();
       }
@@ -100,7 +100,7 @@ export const Component: React.VFC<Props> = (props) => {
   );
   const handleKeyDownControlClose = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (event.keyCode === ApplicationUtils.KeyCode.keyCode.Enter) {
+      if (event.key === ApplicationUtils.Key.key.Enter) {
         changeOpenStatus(false);
         focusControl();
       }
@@ -136,19 +136,19 @@ export const Component: React.VFC<Props> = (props) => {
 
       Shared.Utils.Keys.moveFocus({
         event,
-        keyCode: ApplicationUtils.KeyCode.keyCode.ArrowUp,
+        key: ApplicationUtils.Key.key.ArrowUp,
         element: event.currentTarget.previousElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.moveFocus({
         event,
-        keyCode: ApplicationUtils.KeyCode.keyCode.ArrowDown,
+        key: ApplicationUtils.Key.key.ArrowDown,
         element: event.currentTarget.nextElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.keyDownHandler({
         event,
-        keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
+        key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           props.onChange([option]);
           if (
@@ -190,7 +190,7 @@ export const Component: React.VFC<Props> = (props) => {
 
       Shared.Utils.Keys.keyDownHandler({
         event: event,
-        keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
+        key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           props.onChangeRemove([option]);
           setSelectedOptions(
