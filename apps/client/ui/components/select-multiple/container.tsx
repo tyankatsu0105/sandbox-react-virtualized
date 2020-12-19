@@ -34,12 +34,15 @@ type Props = {
   errorMessage?: string;
   isError?: boolean;
   disabled?: boolean;
-  onChange: ChangeHandler;
-  selectedOptions: Option[];
   /**
-   * ex) useState hooks setter
+   * Handler for selecting option item
    */
-  selectedOptionsUpdateHandler: (options: Props['selectedOptions']) => void;
+  onChange: ChangeHandler;
+
+  /**
+   * Handler for Removing selected option item
+   */
+  onChangeRemove: ChangeHandler;
 };
 
 // ----------------------------------------
@@ -49,6 +52,13 @@ type Props = {
 export const Component: React.VFC<Props> = (props) => {
   const { componentWrapRef, isClickOutside } = Shared.Hooks.useClickOutSide();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const [selectedOptions, setSelectedOptions] = React.useState<Option[]>([]);
+  const updateSelectedOptions = React.useCallback(
+    (options: Option[]) => {
+      setSelectedOptions([...options]);
+    },
+    [setSelectedOptions]
+  );
 
   const menuItemRef = React.useRef<HTMLDivElement>(null);
   const controlRef = React.useRef<HTMLDivElement>(null);
@@ -104,25 +114,21 @@ export const Component: React.VFC<Props> = (props) => {
       option: Props['options'][number];
     }) => {
       props.onChange([params.option]);
-
       if (
-        props.selectedOptions.some(
+        selectedOptions.some(
           (selectedOption) => selectedOption.value === params.option.value
         )
       ) {
-        props.selectedOptionsUpdateHandler(
-          props.selectedOptions.filter(
+        setSelectedOptions(
+          selectedOptions.filter(
             (selectedOption) => selectedOption.value !== params.option.value
           )
         );
       } else {
-        props.selectedOptionsUpdateHandler([
-          ...props.selectedOptions,
-          params.option,
-        ]);
+        setSelectedOptions([...selectedOptions, params.option]);
       }
     },
-    [props]
+    [props, selectedOptions, setSelectedOptions]
   );
 
   const handleKeyDownOptionListItem = React.useCallback(
@@ -150,25 +156,22 @@ export const Component: React.VFC<Props> = (props) => {
         callback: () => {
           props.onChange([params.option]);
           if (
-            props.selectedOptions.some(
+            selectedOptions.some(
               (selectedOption) => selectedOption.value === params.option.value
             )
           ) {
-            props.selectedOptionsUpdateHandler(
-              props.selectedOptions.filter(
+            setSelectedOptions(
+              selectedOptions.filter(
                 (selectedOption) => selectedOption.value !== params.option.value
               )
             );
           } else {
-            props.selectedOptionsUpdateHandler([
-              ...props.selectedOptions,
-              params.option,
-            ]);
+            setSelectedOptions([...selectedOptions, params.option]);
           }
         },
       });
     },
-    [props]
+    [props, selectedOptions, setSelectedOptions]
   );
 
   const handleClickRemoveItemButton = React.useCallback(
@@ -176,13 +179,14 @@ export const Component: React.VFC<Props> = (props) => {
       event: React.MouseEvent<HTMLButtonElement, MouseEvent>;
       option: Props['options'][number];
     }) => {
-      props.selectedOptionsUpdateHandler(
-        props.selectedOptions.filter(
+      props.onChangeRemove([params.option]);
+      setSelectedOptions(
+        selectedOptions.filter(
           (selectedOption) => selectedOption.value !== params.option.value
         )
       );
     },
-    [props]
+    [props, selectedOptions]
   );
 
   const handleKeyDownRemoveItemButton = React.useCallback(
@@ -194,15 +198,16 @@ export const Component: React.VFC<Props> = (props) => {
         event: params.event,
         keyCode: ApplicationUtils.KeyCode.keyCode.Enter,
         callback: () => {
-          props.selectedOptionsUpdateHandler(
-            props.selectedOptions.filter(
+          props.onChangeRemove([params.option]);
+          setSelectedOptions(
+            selectedOptions.filter(
               (selectedOption) => selectedOption.value !== params.option.value
             )
           );
         },
       });
     },
-    [props]
+    [props, selectedOptions]
   );
 
   React.useEffect(() => props.disabled && changeOpenStatus(false), [
@@ -226,7 +231,7 @@ export const Component: React.VFC<Props> = (props) => {
       handleClickControlClose={handleClickControlClose}
       handleKeyDownControlOpen={handleKeyDownControlOpen}
       handleKeyDownControlClose={handleKeyDownControlClose}
-      selectedOptions={props.selectedOptions}
+      selectedOptions={selectedOptions}
       handleClickOptionListItem={handleClickOptionListItem}
       handleKeyDownOptionListItem={handleKeyDownOptionListItem}
       menuItemRef={menuItemRef}

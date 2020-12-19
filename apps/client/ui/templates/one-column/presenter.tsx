@@ -55,10 +55,35 @@ export const Component: React.VFC = () => {
     [setSelectSingleValues]
   );
   const handleChangeMultipleValue: Components.SelectMultiple.ChangeHandler = React.useCallback(
-    (values) => {
-      setSelectedOptionsMultiple([...values]);
+    (options) => {
+      if (
+        selectedOptionsMultiple.some(
+          (selectedOptionMultiple) =>
+            selectedOptionMultiple.value === options[0].value
+        )
+      ) {
+        setSelectedOptionsMultiple(
+          selectedOptionsMultiple.filter(
+            (selectedOptionMultiple) =>
+              selectedOptionMultiple.value !== options[0].value
+          )
+        );
+      } else {
+        setSelectedOptionsMultiple([...selectedOptionsMultiple, options[0]]);
+      }
     },
-    [setSelectedOptionsMultiple]
+    [setSelectedOptionsMultiple, selectedOptionsMultiple]
+  );
+  const handleChangeMultipleValueRemove: Components.SelectMultiple.ChangeHandler = React.useCallback(
+    (options) => {
+      setSelectedOptionsMultiple(
+        selectedOptionsMultiple.filter(
+          (selectedOptionMultiple) =>
+            selectedOptionMultiple.value !== options[0].value
+        )
+      );
+    },
+    [selectedOptionsMultiple, setSelectedOptionsMultiple]
   );
 
   const handleSingleErrorChange = React.useCallback(
@@ -203,8 +228,7 @@ export const Component: React.VFC = () => {
           disabled={selectMultipleIsDisabled}
           errorMessage={'error!!!!!!!'}
           onChange={handleChangeMultipleValue}
-          selectedOptions={selectedOptionsMultiple}
-          selectedOptionsUpdateHandler={setSelectedOptionsMultiple}
+          onChangeRemove={handleChangeMultipleValueRemove}
           inputProps={{
             id: 'multiple-select',
             name: 'multiple-select',
