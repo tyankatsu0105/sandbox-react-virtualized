@@ -210,11 +210,12 @@ export const Component: React.VFC<Props> = (props) => {
 
   const handleKeyDownEscape = React.useCallback(
     (event: KeyboardEvent) => {
-      isOpen &&
-        event.key === ApplicationUtils.Key.key.Escape &&
+      if (isOpen && event.key === ApplicationUtils.Key.key.Escape) {
         setIsOpen(false);
+        focusControl();
+      }
     },
-    [isOpen]
+    [isOpen, focusControl]
   );
 
   React.useEffect(() => {
