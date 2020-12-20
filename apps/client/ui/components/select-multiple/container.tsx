@@ -196,15 +196,10 @@ export const Component: React.VFC<Props> = (props) => {
         key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           props.onChangeRemove([option]);
-          setSelectedOptions(
-            (prev) => {
-              delete prev[option.value];
-              return prev;
-            }
-            // selectedOptions.filter(
-            //   (selectedOption) => selectedOption.value !== option.value
-            // )
-          );
+          setSelectedOptions((prev) => {
+            delete prev[option.value];
+            return prev;
+          });
         },
       });
     },
