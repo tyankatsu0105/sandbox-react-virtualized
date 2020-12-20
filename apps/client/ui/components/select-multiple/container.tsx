@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as Normalizr from 'normalizr';
 
 import * as Presenter from './presenter';
 import * as ApplicationUtils from '~client/application/utils';
@@ -51,17 +50,6 @@ type Props = {
 // ----------------------------------------
 
 export const Component: React.VFC<Props> = (props) => {
-  const optionSchema = new Normalizr.schema.Entity(
-    'options',
-    {},
-    { idAttribute: 'value' }
-  );
-  const optionsSchema = new Normalizr.schema.Array(optionSchema);
-  const normalizedData = Normalizr.normalize<Option>(
-    props.options,
-    optionsSchema
-  );
-
   const { componentWrapRef, isClickOutside } = Shared.Hooks.useClickOutSide();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [selectedOptions, setSelectedOptions] = React.useState<
@@ -235,7 +223,7 @@ export const Component: React.VFC<Props> = (props) => {
 
   return (
     <Presenter.Component
-      options={normalizedData.entities.options}
+      options={props.options}
       errorMessage={props.errorMessage}
       isError={props.isError}
       disabled={props.disabled}

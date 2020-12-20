@@ -23,7 +23,7 @@ type Icon = keyof typeof Atoms.Icon.icons;
 // ----------------------------------------
 type Props = {
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  options: Record<string, Option>;
+  options: Option[];
   errorMessage?: string;
   isError?: boolean;
   disabled?: boolean;
@@ -100,8 +100,9 @@ export const Component: React.VFC<Props> = (props) => {
   const scrollToIndex = React.useMemo(() => {
     if (props.selectedOptions.size === 0) return 0;
 
-    const index = Object.keys(props.options).findIndex(
-      (key) => key === Array.from(props.selectedOptions.values()).pop().value
+    const index = props.options.findIndex(
+      (option) =>
+        option.value === Array.from(props.selectedOptions.values()).pop().value
     );
     return index;
   }, [props.options, props.selectedOptions]);
@@ -178,7 +179,7 @@ export const Component: React.VFC<Props> = (props) => {
                   scrollToIndex={scrollToIndex}
                   width={width}
                   height={height}
-                  rowCount={Object.keys(props.options).length}
+                  rowCount={props.options.length}
                   rowHeight={40}
                   rowRenderer={rowRenderer}
                 />
