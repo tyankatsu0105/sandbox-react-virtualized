@@ -23,7 +23,7 @@ type Icon = keyof typeof Atoms.Icon.icons;
 // ----------------------------------------
 type Props = {
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  options: Option[];
+  options: Record<string, Option>;
   errorMessage?: string;
   isError?: boolean;
   disabled?: boolean;
@@ -36,7 +36,7 @@ type Props = {
   handleKeyDownControlClose: (
     event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
-  selectedOptions: Option[];
+  selectedOptions: Record<string, Option>;
   handleClickOptionListItem: (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
@@ -62,9 +62,7 @@ export const Component: React.VFC<Props> = (props) => {
   const rowRenderer = (rowRendererProps: ReactVirtualizedListRowProps) => {
     const option = props.options[rowRendererProps.index];
     const tabIndex = props.isOpen ? 0 : -1;
-    const isSelected = props.selectedOptions.some(
-      (selectedOption) => selectedOption.value === option.value
-    );
+    const isSelected = props.selectedOptions[option.value] ? true : false;
 
     const createRef = () => {
       if (rowRendererProps.index === 0) return props.menuItemRef;
@@ -72,7 +70,9 @@ export const Component: React.VFC<Props> = (props) => {
         return props.menuItemRef;
       if (
         option.value ===
-        props.selectedOptions[props.selectedOptions.length - 1]?.value
+        Object.keys(props.selectedOptions)[
+          Object.keys(props.selectedOptions).length - 1
+        ]
       )
         return props.menuItemRef;
     };
@@ -100,12 +100,14 @@ export const Component: React.VFC<Props> = (props) => {
   };
 
   const scrollToIndex = React.useMemo(() => {
-    if (props.selectedOptions.length === 0) return 0;
+    if (Object.keys(props.selectedOptions).length === 0) return 0;
 
-    const index = props.options.findIndex(
-      (option) =>
-        option.value ===
-        props.selectedOptions[props.selectedOptions.length - 1].value
+    const index = Object.keys(props.options).findIndex(
+      (key) =>
+        key ===
+        Object.keys(props.selectedOptions)[
+          Object.keys(props.selectedOptions).length - 1
+        ]
     );
     return index;
   }, [props.options, props.selectedOptions]);
@@ -129,19 +131,17 @@ export const Component: React.VFC<Props> = (props) => {
         }
       >
         <HiddenInput
-          value={props.selectedOptions.map(
-            (selectedOption) => selectedOption.value
-          )}
+          value={Object.keys(props.selectedOptions).map((key) => key)}
           aria-hidden
           tabIndex={-1}
           {...props.inputProps}
         />
-        {props.selectedOptions.length > 0 ? (
+        {Object.keys(props.selectedOptions).length > 0 ? (
           <SelectValueWrap
             onClick={(event) => event.stopPropagation()}
             onKeyDown={(event) => event.stopPropagation()}
           >
-            {props.selectedOptions.map((selectedOption) => (
+            {Object.values(props.selectedOptions).map((selectedOption) => (
               <SelectValue key={selectedOption.value}>
                 <SelectValueLabel>{selectedOption.label}</SelectValueLabel>
                 <SelectValueButton
@@ -180,7 +180,7 @@ export const Component: React.VFC<Props> = (props) => {
                   scrollToIndex={scrollToIndex}
                   width={width}
                   height={height}
-                  rowCount={props.options.length}
+                  rowCount={Object.keys(props.options).length}
                   rowHeight={40}
                   rowRenderer={rowRenderer}
                 />

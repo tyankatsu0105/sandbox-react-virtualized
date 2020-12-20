@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as Normalizr from 'normalizr';
 
 import * as Presenter from './presenter';
 import * as ApplicationUtils from '~client/application/utils';
@@ -50,9 +51,22 @@ type Props = {
 // ----------------------------------------
 
 export const Component: React.VFC<Props> = (props) => {
+  const optionSchema = new Normalizr.schema.Entity(
+    'options',
+    {},
+    { idAttribute: 'value' }
+  );
+  const optionsSchema = new Normalizr.schema.Array(optionSchema);
+  const normalizedData = Normalizr.normalize<Option>(
+    props.options,
+    optionsSchema
+  );
+
   const { componentWrapRef, isClickOutside } = Shared.Hooks.useClickOutSide();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const [selectedOptions, setSelectedOptions] = React.useState<Option[]>([]);
+  const [selectedOptions, setSelectedOptions] = React.useState<
+    Record<string, Option>
+  >({});
 
   const menuItemRef = React.useRef<HTMLDivElement>(null);
   const controlRef = React.useRef<HTMLDivElement>(null);
@@ -107,18 +121,16 @@ export const Component: React.VFC<Props> = (props) => {
       const option = JSON.parse(event.currentTarget.dataset.option) as Option;
 
       props.onChange([option]);
-      if (
-        selectedOptions.some(
-          (selectedOption) => selectedOption.value === option.value
-        )
-      ) {
-        setSelectedOptions(
-          selectedOptions.filter(
-            (selectedOption) => selectedOption.value !== option.value
-          )
-        );
+      if (selectedOptions[option.value]) {
+        setSelectedOptions((prev) => {
+          delete prev[option.value];
+          return prev;
+        });
       } else {
-        setSelectedOptions([...selectedOptions, option]);
+        setSelectedOptions((prev) => {
+          prev[option.value] = option;
+          return prev;
+        });
       }
     },
     [props, selectedOptions, setSelectedOptions]
@@ -145,18 +157,16 @@ export const Component: React.VFC<Props> = (props) => {
         key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           props.onChange([option]);
-          if (
-            selectedOptions.some(
-              (selectedOption) => selectedOption.value === option.value
-            )
-          ) {
-            setSelectedOptions(
-              selectedOptions.filter(
-                (selectedOption) => selectedOption.value !== option.value
-              )
-            );
+          if (selectedOptions[option.value]) {
+            setSelectedOptions((prev) => {
+              delete prev[option.value];
+              return prev;
+            });
           } else {
-            setSelectedOptions([...selectedOptions, option]);
+            setSelectedOptions((prev) => {
+              prev[option.value] = option;
+              return prev;
+            });
           }
         },
       });
@@ -169,13 +179,12 @@ export const Component: React.VFC<Props> = (props) => {
       const option = JSON.parse(event.currentTarget.dataset.option) as Option;
 
       props.onChangeRemove([option]);
-      setSelectedOptions(
-        selectedOptions.filter(
-          (selectedOption) => selectedOption.value !== option.value
-        )
-      );
+      setSelectedOptions((prev) => {
+        delete prev[option.value];
+        return prev;
+      });
     },
-    [props, selectedOptions]
+    [props]
   );
 
   const handleKeyDownRemoveItemButton = React.useCallback(
@@ -188,14 +197,18 @@ export const Component: React.VFC<Props> = (props) => {
         callback: () => {
           props.onChangeRemove([option]);
           setSelectedOptions(
-            selectedOptions.filter(
-              (selectedOption) => selectedOption.value !== option.value
-            )
+            (prev) => {
+              delete prev[option.value];
+              return prev;
+            }
+            // selectedOptions.filter(
+            //   (selectedOption) => selectedOption.value !== option.value
+            // )
           );
         },
       });
     },
-    [props, selectedOptions]
+    [props]
   );
 
   React.useEffect(() => props.disabled && changeOpenStatus(false), [
@@ -227,7 +240,7 @@ export const Component: React.VFC<Props> = (props) => {
 
   return (
     <Presenter.Component
-      options={props.options}
+      options={normalizedData.entities.options}
       errorMessage={props.errorMessage}
       isError={props.isError}
       disabled={props.disabled}
