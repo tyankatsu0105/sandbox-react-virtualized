@@ -65,8 +65,8 @@ export const Component: React.VFC<Props> = (props) => {
   const { componentWrapRef, isClickOutside } = Shared.Hooks.useClickOutSide();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [selectedOptions, setSelectedOptions] = React.useState<
-    Record<string, Option>
-  >({});
+    Map<string, Option>
+  >(new Map());
 
   const menuItemRef = React.useRef<HTMLDivElement>(null);
   const controlRef = React.useRef<HTMLDivElement>(null);
@@ -121,14 +121,14 @@ export const Component: React.VFC<Props> = (props) => {
       const option = JSON.parse(event.currentTarget.dataset.option) as Option;
 
       props.onChange([option]);
-      if (selectedOptions[option.value]) {
+      if (selectedOptions.has(option.value)) {
         setSelectedOptions((prev) => {
-          delete prev[option.value];
+          prev.delete(option.value);
           return prev;
         });
       } else {
         setSelectedOptions((prev) => {
-          prev[option.value] = option;
+          prev.set(option.value, option);
           return prev;
         });
       }
@@ -157,14 +157,14 @@ export const Component: React.VFC<Props> = (props) => {
         key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           props.onChange([option]);
-          if (selectedOptions[option.value]) {
+          if (selectedOptions.has(option.value)) {
             setSelectedOptions((prev) => {
-              delete prev[option.value];
+              prev.delete(option.value);
               return prev;
             });
           } else {
             setSelectedOptions((prev) => {
-              prev[option.value] = option;
+              prev.set(option.value, option);
               return prev;
             });
           }
@@ -180,7 +180,7 @@ export const Component: React.VFC<Props> = (props) => {
 
       props.onChangeRemove([option]);
       setSelectedOptions((prev) => {
-        delete prev[option.value];
+        prev.delete(option.value);
         return prev;
       });
     },
@@ -197,7 +197,7 @@ export const Component: React.VFC<Props> = (props) => {
         callback: () => {
           props.onChangeRemove([option]);
           setSelectedOptions((prev) => {
-            delete prev[option.value];
+            prev.delete(option.value);
             return prev;
           });
         },

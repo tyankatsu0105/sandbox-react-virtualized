@@ -36,7 +36,7 @@ type Props = {
   handleKeyDownControlClose: (
     event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
-  selectedOptions: Record<string, Option>;
+  selectedOptions: Map<string, Option>;
   handleClickOptionListItem: (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
@@ -62,17 +62,15 @@ export const Component: React.VFC<Props> = (props) => {
   const rowRenderer = (rowRendererProps: ReactVirtualizedListRowProps) => {
     const option = props.options[rowRendererProps.index];
     const tabIndex = props.isOpen ? 0 : -1;
-    const isSelected = props.selectedOptions[option.value] ? true : false;
+    const isSelected = props.selectedOptions.has(option.value) ? true : false;
 
     const createRef = () => {
       if (rowRendererProps.index === 0) return props.menuItemRef;
       if (props.menuItemRef.current == null && rowRendererProps.index === 0)
         return props.menuItemRef;
       if (
-        option.value ===
-        Object.keys(props.selectedOptions)[
-          Object.keys(props.selectedOptions).length - 1
-        ]
+        props.selectedOptions.size > 0 &&
+        option.value === Array.from(props.selectedOptions.values()).pop().value
       )
         return props.menuItemRef;
     };
@@ -100,14 +98,10 @@ export const Component: React.VFC<Props> = (props) => {
   };
 
   const scrollToIndex = React.useMemo(() => {
-    if (Object.keys(props.selectedOptions).length === 0) return 0;
+    if (props.selectedOptions.size === 0) return 0;
 
     const index = Object.keys(props.options).findIndex(
-      (key) =>
-        key ===
-        Object.keys(props.selectedOptions)[
-          Object.keys(props.selectedOptions).length - 1
-        ]
+      (key) => key === Array.from(props.selectedOptions.values()).pop().value
     );
     return index;
   }, [props.options, props.selectedOptions]);
@@ -131,31 +125,35 @@ export const Component: React.VFC<Props> = (props) => {
         }
       >
         <HiddenInput
-          value={Object.keys(props.selectedOptions).map((key) => key)}
+          value={Array.from(props.selectedOptions.values()).map(
+            (value) => value.value
+          )}
           aria-hidden
           tabIndex={-1}
           {...props.inputProps}
         />
-        {Object.keys(props.selectedOptions).length > 0 ? (
+        {props.selectedOptions.size > 0 ? (
           <SelectValueWrap
             onClick={(event) => event.stopPropagation()}
             onKeyDown={(event) => event.stopPropagation()}
           >
-            {Object.values(props.selectedOptions).map((selectedOption) => (
-              <SelectValue key={selectedOption.value}>
-                <SelectValueLabel>{selectedOption.label}</SelectValueLabel>
-                <SelectValueButton
-                  data-option={JSON.stringify(selectedOption)}
-                  onClick={props.handleClickRemoveItemButton}
-                  onKeyDown={props.handleKeyDownRemoveItemButton}
-                >
-                  <Atoms.Icon.Component
-                    icon="close"
-                    size={16}
-                  ></Atoms.Icon.Component>
-                </SelectValueButton>
-              </SelectValue>
-            ))}
+            {Array.from(props.selectedOptions.values()).map(
+              (selectedOption) => (
+                <SelectValue key={selectedOption.value}>
+                  <SelectValueLabel>{selectedOption.label}</SelectValueLabel>
+                  <SelectValueButton
+                    data-option={JSON.stringify(selectedOption)}
+                    onClick={props.handleClickRemoveItemButton}
+                    onKeyDown={props.handleKeyDownRemoveItemButton}
+                  >
+                    <Atoms.Icon.Component
+                      icon="close"
+                      size={16}
+                    ></Atoms.Icon.Component>
+                  </SelectValueButton>
+                </SelectValue>
+              )
+            )}
           </SelectValueWrap>
         ) : (
           <Placeholder disabled={props.disabled}>選択してください</Placeholder>
