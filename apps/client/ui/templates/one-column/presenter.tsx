@@ -1,10 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import * as ApplicationUtils from '~client/application/utils';
+import * as Shared from '~client/shared';
 import * as Atoms from '~client/ui/atoms';
 import * as Components from '~client/ui/components';
-import * as Shared from '~client/shared';
-import * as ApplicationUtils from '~client/application/utils';
 // ----------------------------------------
 // helpers
 // ----------------------------------------
@@ -28,8 +28,8 @@ export const Component: React.VFC = () => {
   );
   const [selectedOptionsMultiple, setSelectedOptionsMultiple] = React.useState<
     {
-      value: string;
       label: string;
+      value: string;
     }[]
   >([]);
 
@@ -124,12 +124,12 @@ export const Component: React.VFC = () => {
   const handleEnterResetSingleValue = React.useCallback(
     (event: React.KeyboardEvent<HTMLButtonElement>) => {
       Shared.Utils.Keys.keyDownHandler({
-        event,
-        key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           handleChangeSingleValue([]);
           setSelectSingleValues([]);
         },
+        event,
+        key: ApplicationUtils.Key.key.Enter,
       });
     },
     [setSelectSingleValues, handleChangeSingleValue]
@@ -137,12 +137,12 @@ export const Component: React.VFC = () => {
   const handleEnterResetMultipleValue = React.useCallback(
     (event: React.KeyboardEvent<HTMLButtonElement>) => {
       Shared.Utils.Keys.keyDownHandler({
-        event,
-        key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           handleChangeMultipleValue([]);
           setSelectedOptionsMultiple([]);
         },
+        event,
+        key: ApplicationUtils.Key.key.Enter,
       });
     },
     [setSelectedOptionsMultiple, handleChangeMultipleValue]
@@ -157,41 +157,41 @@ export const Component: React.VFC = () => {
         <CheckBoxListWrap>
           <CheckBoxItemLabel htmlFor="single-error">
             <CheckBox
-              type="checkbox"
               id="single-error"
               name="single-error"
               onChange={handleSingleErrorChange}
+              type="checkbox"
             />
             error
           </CheckBoxItemLabel>
           <CheckBoxItemLabel htmlFor="single-disable">
             <CheckBox
-              type="checkbox"
               id="single-disable"
               name="single-disable"
               onChange={handleSingleDisabledChange}
+              type="checkbox"
             />
             disabled
           </CheckBoxItemLabel>
         </CheckBoxListWrap>
         <Components.SelectSingle.Component
-          options={options}
-          isError={selectSingleIsError}
           disabled={selectSingleIsDisabled}
           errorMessage={'error!!!!!!!'}
-          onChange={handleChangeSingleValue}
-          values={selectSingleValues}
-          valuesUpdateHandler={setSelectSingleValues}
           inputProps={{
             id: 'single-select',
             name: 'single-select',
           }}
+          isError={selectSingleIsError}
+          onChange={handleChangeSingleValue}
+          options={options}
+          values={selectSingleValues}
+          valuesUpdateHandler={setSelectSingleValues}
         />
         <ButtonWrap>
           <Button
-            type="button"
             onClick={handleClickResetSingleValue}
             onKeyDown={handleEnterResetSingleValue}
+            type="button"
           >
             clear
           </Button>
@@ -205,40 +205,40 @@ export const Component: React.VFC = () => {
         <CheckBoxListWrap>
           <CheckBoxItemLabel htmlFor="multiple-error">
             <CheckBox
-              type="checkbox"
-              name="multiple-error"
               id="multiple-error"
+              name="multiple-error"
               onChange={handleMultipleErrorChange}
+              type="checkbox"
             />
             error
           </CheckBoxItemLabel>
           <CheckBoxItemLabel htmlFor="multiple-disable">
             <CheckBox
-              type="checkbox"
-              name="multiple-disable"
               id="multiple-disable"
+              name="multiple-disable"
               onChange={handleMultipleDisabledChange}
+              type="checkbox"
             />
             disabled
           </CheckBoxItemLabel>
         </CheckBoxListWrap>
         <Components.SelectMultiple.Component
-          options={options}
-          isError={selectMultipleIsError}
           disabled={selectMultipleIsDisabled}
           errorMessage={'error!!!!!!!'}
-          onChange={handleChangeMultipleValue}
-          onChangeRemove={handleChangeMultipleValueRemove}
           inputProps={{
             id: 'multiple-select',
             name: 'multiple-select',
           }}
+          isError={selectMultipleIsError}
+          onChange={handleChangeMultipleValue}
+          onChangeRemove={handleChangeMultipleValueRemove}
+          options={options}
         />
         <ButtonWrap>
           <Button
-            type="button"
             onClick={handleClickResetMultipleValue}
             onKeyDown={handleEnterResetMultipleValue}
+            type="button"
           >
             clear
           </Button>

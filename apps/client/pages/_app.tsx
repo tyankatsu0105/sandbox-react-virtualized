@@ -1,14 +1,12 @@
-import React from 'react';
+import 'minireset.css';
 
 import { AppProps } from 'next/app';
-
+import React from 'react';
 import { ThemeProvider } from 'styled-components';
-import { theme } from '~client/styles/theme';
-import { GlobalStyle } from '~client/styles/global-style';
 
 import * as Layouts from '~client/layouts';
-
-import 'minireset.css';
+import { GlobalStyle } from '~client/styles/global-style';
+import { theme } from '~client/styles/theme';
 
 const CustomApp = ({ Component, pageProps }: AppProps) => {
   React.useEffect(() => {

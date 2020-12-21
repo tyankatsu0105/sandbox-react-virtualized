@@ -1,12 +1,10 @@
+import * as CSS from 'csstype';
 import * as React from 'react';
-
 import styled from 'styled-components';
 
-import * as CSS from 'csstype';
-
 import { ReactComponent as Checked } from './assets/checked.svg';
-import { ReactComponent as UnChecked } from './assets/un-checked.svg';
 import { ReactComponent as Close } from './assets/close.svg';
+import { ReactComponent as UnChecked } from './assets/un-checked.svg';
 
 // ----------------------------------------
 // setups
@@ -14,8 +12,8 @@ import { ReactComponent as Close } from './assets/close.svg';
 
 export const icons = {
   checked: Checked,
-  unChecked: UnChecked,
   close: Close,
+  unChecked: UnChecked,
 };
 
 // ----------------------------------------
@@ -23,8 +21,8 @@ export const icons = {
 // ----------------------------------------
 
 type Props = {
-  icon: keyof typeof icons;
   color?: CSS.Property.Color;
+  icon: keyof typeof icons;
   size?: number;
 };
 // ----------------------------------------

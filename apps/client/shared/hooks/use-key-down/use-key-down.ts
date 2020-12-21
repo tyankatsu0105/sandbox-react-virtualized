@@ -1,12 +1,13 @@
 import * as React from 'react';
+
 import * as ApplicationUtils from '~client/application/utils';
 
 const useIsomorphicEffect =
   typeof window === 'undefined' ? React.useEffect : React.useLayoutEffect;
 
 type UseKeypressParams = {
-  key: ApplicationUtils.Key.Key;
   callback: (event: React.KeyboardEvent) => void;
+  key: ApplicationUtils.Key.Key;
 };
 export const useKeypress = (params: UseKeypressParams) => {
   useIsomorphicEffect(() => {

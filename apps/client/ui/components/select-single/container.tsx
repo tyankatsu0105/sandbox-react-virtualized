@@ -1,8 +1,9 @@
 import * as React from 'react';
 
-import * as Presenter from './presenter';
 import * as ApplicationUtils from '~client/application/utils';
 import * as Shared from '~client/shared';
+
+import * as Presenter from './presenter';
 
 // ----------------------------------------
 // types
@@ -14,15 +15,15 @@ export type ChangeHandler = (values: Values) => void;
 // props
 // ----------------------------------------
 type Props = {
-  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  options: {
-    value: string;
-    label: string;
-  }[];
-  errorMessage?: string;
-  isError?: boolean;
   disabled?: boolean;
+  errorMessage?: string;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  isError?: boolean;
   onChange: ChangeHandler;
+  options: {
+    label: string;
+    value: string;
+  }[];
   values: string[];
   /**
    * ex) useState hooks setter
@@ -99,26 +100,26 @@ export const Component: React.VFC<Props> = (props) => {
   const handleKeyDownOptionListItem = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       Shared.Utils.Keys.moveFocus({
+        element: event.currentTarget.previousElementSibling as HTMLDivElement,
         event,
         key: ApplicationUtils.Key.key.ArrowUp,
-        element: event.currentTarget.previousElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.moveFocus({
+        element: event.currentTarget.nextElementSibling as HTMLDivElement,
         event,
         key: ApplicationUtils.Key.key.ArrowDown,
-        element: event.currentTarget.nextElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.keyDownHandler({
-        event,
-        key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           props.onChange([event.currentTarget.dataset.value]);
           props.valuesUpdateHandler([event.currentTarget.dataset.value]);
           changeOpenStatus(false);
           focusControl();
         },
+        event,
+        key: ApplicationUtils.Key.key.Enter,
       });
     },
     [changeOpenStatus, focusControl, props]
@@ -153,22 +154,22 @@ export const Component: React.VFC<Props> = (props) => {
 
   return (
     <Presenter.Component
-      options={props.options}
-      errorMessage={props.errorMessage}
-      isError={props.isError}
-      disabled={props.disabled}
-      isOpen={isOpen}
-      handleClickControlOpen={handleClickControlOpen}
-      handleClickControlClose={handleClickControlClose}
-      handleKeyDownControlOpen={handleKeyDownControlOpen}
-      handleKeyDownControlClose={handleKeyDownControlClose}
-      values={props.values}
-      handleClickOptionListItem={handleClickOptionListItem}
-      handleKeyDownOptionListItem={handleKeyDownOptionListItem}
-      menuItemRef={menuItemRef}
-      controlRef={controlRef}
-      inputProps={props.inputProps}
       componentWrapRef={componentWrapRef}
+      controlRef={controlRef}
+      disabled={props.disabled}
+      errorMessage={props.errorMessage}
+      handleClickControlClose={handleClickControlClose}
+      handleClickControlOpen={handleClickControlOpen}
+      handleClickOptionListItem={handleClickOptionListItem}
+      handleKeyDownControlClose={handleKeyDownControlClose}
+      handleKeyDownControlOpen={handleKeyDownControlOpen}
+      handleKeyDownOptionListItem={handleKeyDownOptionListItem}
+      inputProps={props.inputProps}
+      isError={props.isError}
+      isOpen={isOpen}
+      menuItemRef={menuItemRef}
+      options={props.options}
+      values={props.values}
     />
   );
 };

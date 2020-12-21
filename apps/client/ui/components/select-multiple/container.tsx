@@ -1,15 +1,16 @@
 import * as React from 'react';
 
-import * as Presenter from './presenter';
 import * as ApplicationUtils from '~client/application/utils';
 import * as Shared from '~client/shared';
+
+import * as Presenter from './presenter';
 
 // ----------------------------------------
 // types
 // ----------------------------------------
 export type Option = {
-  value: string;
   label: string;
+  value: string;
 };
 export type ChangeHandler = (options: Option[]) => void;
 
@@ -17,32 +18,32 @@ export type ChangeHandler = (options: Option[]) => void;
 // props
 // ----------------------------------------
 type Props = {
+  disabled?: boolean;
+
+  /**
+   * Error message when isError is true
+   */
+  errorMessage?: string;
+
   /**
    * props to input element
    */
   inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  isError?: boolean;
+  /**
+   * Handler for selecting option item
+   */
+  onChange: ChangeHandler;
+  /**
+   * Handler for Removing selected option item
+   */
+  onChangeRemove: ChangeHandler;
 
   /**
    * options
    * @example options = [{label: 'label-1', value: '1'}]
    */
   options: Option[];
-
-  /**
-   * Error message when isError is true
-   */
-  errorMessage?: string;
-  isError?: boolean;
-  disabled?: boolean;
-  /**
-   * Handler for selecting option item
-   */
-  onChange: ChangeHandler;
-
-  /**
-   * Handler for Removing selected option item
-   */
-  onChangeRemove: ChangeHandler;
 };
 
 // ----------------------------------------
@@ -129,20 +130,18 @@ export const Component: React.VFC<Props> = (props) => {
       const option = JSON.parse(event.currentTarget.dataset.option) as Option;
 
       Shared.Utils.Keys.moveFocus({
+        element: event.currentTarget.previousElementSibling as HTMLDivElement,
         event,
         key: ApplicationUtils.Key.key.ArrowUp,
-        element: event.currentTarget.previousElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.moveFocus({
+        element: event.currentTarget.nextElementSibling as HTMLDivElement,
         event,
         key: ApplicationUtils.Key.key.ArrowDown,
-        element: event.currentTarget.nextElementSibling as HTMLDivElement,
       });
 
       Shared.Utils.Keys.keyDownHandler({
-        event,
-        key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           props.onChange([option]);
           if (selectedOptions.has(option.value)) {
@@ -157,6 +156,8 @@ export const Component: React.VFC<Props> = (props) => {
             });
           }
         },
+        event,
+        key: ApplicationUtils.Key.key.Enter,
       });
     },
     [props, selectedOptions, setSelectedOptions]
@@ -180,8 +181,6 @@ export const Component: React.VFC<Props> = (props) => {
       const option = JSON.parse(event.currentTarget.dataset.option) as Option;
 
       Shared.Utils.Keys.keyDownHandler({
-        event: event,
-        key: ApplicationUtils.Key.key.Enter,
         callback: () => {
           props.onChangeRemove([option]);
           setSelectedOptions((prev) => {
@@ -189,6 +188,8 @@ export const Component: React.VFC<Props> = (props) => {
             return prev;
           });
         },
+        event: event,
+        key: ApplicationUtils.Key.key.Enter,
       });
     },
     [props]
@@ -223,24 +224,24 @@ export const Component: React.VFC<Props> = (props) => {
 
   return (
     <Presenter.Component
-      options={props.options}
-      errorMessage={props.errorMessage}
-      isError={props.isError}
-      disabled={props.disabled}
-      isOpen={isOpen}
-      handleClickControlOpen={handleClickControlOpen}
-      handleClickControlClose={handleClickControlClose}
-      handleKeyDownControlOpen={handleKeyDownControlOpen}
-      handleKeyDownControlClose={handleKeyDownControlClose}
-      selectedOptions={selectedOptions}
-      handleClickOptionListItem={handleClickOptionListItem}
-      handleKeyDownOptionListItem={handleKeyDownOptionListItem}
-      menuItemRef={menuItemRef}
-      controlRef={controlRef}
-      inputProps={props.inputProps}
       componentWrapRef={componentWrapRef}
+      controlRef={controlRef}
+      disabled={props.disabled}
+      errorMessage={props.errorMessage}
+      handleClickControlClose={handleClickControlClose}
+      handleClickControlOpen={handleClickControlOpen}
+      handleClickOptionListItem={handleClickOptionListItem}
       handleClickRemoveItemButton={handleClickRemoveItemButton}
+      handleKeyDownControlClose={handleKeyDownControlClose}
+      handleKeyDownControlOpen={handleKeyDownControlOpen}
+      handleKeyDownOptionListItem={handleKeyDownOptionListItem}
       handleKeyDownRemoveItemButton={handleKeyDownRemoveItemButton}
+      inputProps={props.inputProps}
+      isError={props.isError}
+      isOpen={isOpen}
+      menuItemRef={menuItemRef}
+      options={props.options}
+      selectedOptions={selectedOptions}
     />
   );
 };

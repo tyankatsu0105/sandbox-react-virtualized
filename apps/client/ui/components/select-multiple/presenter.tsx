@@ -1,11 +1,10 @@
 import * as React from 'react';
+import { CSSTransition } from 'react-transition-group';
+import { AutoSizer as ReactVirtualizedAutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer';
 import {
   List as ReactVirtualizedList,
   ListRowProps as ReactVirtualizedListRowProps,
 } from 'react-virtualized/dist/commonjs/List';
-import { AutoSizer as ReactVirtualizedAutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer';
-import { CSSTransition } from 'react-transition-group';
-
 import styled from 'styled-components';
 
 import * as Atoms from '~client/ui/atoms';
@@ -22,36 +21,36 @@ type Icon = keyof typeof Atoms.Icon.icons;
 // props
 // ----------------------------------------
 type Props = {
-  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  options: Option[];
-  errorMessage?: string;
-  isError?: boolean;
+  componentWrapRef: React.MutableRefObject<any>;
+  controlRef: React.MutableRefObject<HTMLDivElement>;
   disabled?: boolean;
-  isOpen: boolean;
-  handleClickControlOpen: () => void;
+  errorMessage?: string;
   handleClickControlClose: () => void;
-  handleKeyDownControlOpen: (
-    event: React.KeyboardEvent<HTMLDivElement>
+  handleClickControlOpen: () => void;
+  handleClickOptionListItem: (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => void;
+  handleClickRemoveItemButton: (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => void;
   handleKeyDownControlClose: (
     event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
-  selectedOptions: Map<string, Option>;
-  handleClickOptionListItem: (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  handleKeyDownControlOpen: (
+    event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
   handleKeyDownOptionListItem: (
     event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
-  menuItemRef: React.MutableRefObject<HTMLDivElement>;
-  controlRef: React.MutableRefObject<HTMLDivElement>;
-  componentWrapRef: React.MutableRefObject<any>;
-  handleClickRemoveItemButton: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => void;
   handleKeyDownRemoveItemButton: (
     event: React.KeyboardEvent<HTMLButtonElement>
   ) => void;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  isError?: boolean;
+  isOpen: boolean;
+  menuItemRef: React.MutableRefObject<HTMLDivElement>;
+  options: Option[];
+  selectedOptions: Map<string, Option>;
 };
 
 // ----------------------------------------
@@ -79,14 +78,14 @@ export const Component: React.VFC<Props> = (props) => {
 
     return (
       <OptionListItem
-        ref={createRef()}
         key={rowRendererProps.key}
-        style={rowRendererProps.style}
-        tabIndex={tabIndex}
-        onClick={props.handleClickOptionListItem}
-        onKeyDown={props.handleKeyDownOptionListItem}
+        ref={createRef()}
         data-option={JSON.stringify(option)}
         isSelected={isSelected}
+        onClick={props.handleClickOptionListItem}
+        onKeyDown={props.handleKeyDownOptionListItem}
+        style={rowRendererProps.style}
+        tabIndex={tabIndex}
       >
         <OptionListItemIconWrap>
           <Atoms.Icon.Component icon={icon}></Atoms.Icon.Component>
@@ -111,9 +110,8 @@ export const Component: React.VFC<Props> = (props) => {
     <Wrap ref={props.componentWrapRef}>
       <Control
         ref={props.controlRef}
-        tabIndex={0}
-        isError={props.isError}
         disabled={props.disabled}
+        isError={props.isError}
         onClick={
           props.isOpen
             ? props.handleClickControlClose
@@ -124,13 +122,14 @@ export const Component: React.VFC<Props> = (props) => {
             ? props.handleKeyDownControlClose
             : props.handleKeyDownControlOpen
         }
+        tabIndex={0}
       >
         <HiddenInput
+          aria-hidden
+          tabIndex={-1}
           value={Array.from(props.selectedOptions.values()).map(
             (value) => value.value
           )}
-          aria-hidden
-          tabIndex={-1}
           {...props.inputProps}
         />
         {props.selectedOptions.size > 0 ? (
@@ -167,21 +166,21 @@ export const Component: React.VFC<Props> = (props) => {
 
       <CSSTransition
         classNames={transitionClassName}
-        timeout={700}
         in={props.isOpen}
+        timeout={700}
       >
         <OptionListWrap>
           <OptionList>
             <ReactVirtualizedAutoSizer>
               {({ height, width }) => (
                 <ReactVirtualizedList
-                  tabIndex={-1}
-                  scrollToIndex={scrollToIndex}
-                  width={width}
                   height={height}
                   rowCount={props.options.length}
                   rowHeight={40}
                   rowRenderer={rowRenderer}
+                  scrollToIndex={scrollToIndex}
+                  tabIndex={-1}
+                  width={width}
                 />
               )}
             </ReactVirtualizedAutoSizer>
@@ -201,8 +200,8 @@ const Wrap = styled.div`
 `;
 
 type ControlProps = {
-  isError: Props['isError'];
   disabled: Props['disabled'];
+  isError: Props['isError'];
 };
 const Control = styled.div<ControlProps>`
   border-radius: 6px;

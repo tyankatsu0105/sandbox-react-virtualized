@@ -3,11 +3,11 @@
  * keycodeはdeprecatedになっているため
  */
 export const key = {
-  Enter: 'Enter',
-  Space: ' ',
-  Escape: 'Escape',
-  ArrowUp: 'ArrowUp',
   ArrowDown: 'ArrowDown',
+  ArrowUp: 'ArrowUp',
+  Enter: 'Enter',
+  Escape: 'Escape',
+  Space: ' ',
 } as const;
 
 export type Key = typeof key[keyof typeof key];

@@ -1,9 +1,9 @@
 import * as ApplicationUtils from '~client/application/utils';
 
 type MoveFocusParams<E> = {
+  element: E;
   event: React.KeyboardEvent;
   key: ApplicationUtils.Key.Key;
-  element: E;
 };
 /**
  * keyCodeが入力されるとelementに向けてfocusをあわせる
@@ -18,9 +18,9 @@ export const moveFocus = <E extends HTMLOrSVGElement>(
 };
 
 type KeyDownHandlerParams = {
+  callback: () => void;
   event: React.KeyboardEvent;
   key: ApplicationUtils.Key.Key;
-  callback: () => void;
 };
 export const keyDownHandler = (params: KeyDownHandlerParams) => {
   params.event.key === params.key && params.callback();

@@ -1,11 +1,10 @@
 import * as React from 'react';
+import { CSSTransition } from 'react-transition-group';
+import { AutoSizer as ReactVirtualizedAutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer';
 import {
   List as ReactVirtualizedList,
   ListRowProps as ReactVirtualizedListRowProps,
 } from 'react-virtualized/dist/commonjs/List';
-import { AutoSizer as ReactVirtualizedAutoSizer } from 'react-virtualized/dist/commonjs/AutoSizer';
-import { CSSTransition } from 'react-transition-group';
-
 import styled from 'styled-components';
 
 // ----------------------------------------
@@ -17,33 +16,33 @@ const transitionClassName = 'fade';
 // props
 // ----------------------------------------
 type Props = {
-  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  options: {
-    value: string;
-    label: string;
-  }[];
-  errorMessage?: string;
-  isError?: boolean;
+  componentWrapRef: React.MutableRefObject<any>;
+  controlRef: React.MutableRefObject<HTMLDivElement>;
   disabled?: boolean;
-  isOpen: boolean;
-  handleClickControlOpen: () => void;
+  errorMessage?: string;
   handleClickControlClose: () => void;
-  handleKeyDownControlOpen: (
-    event: React.KeyboardEvent<HTMLDivElement>
+  handleClickControlOpen: () => void;
+  handleClickOptionListItem: (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   handleKeyDownControlClose: (
     event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
-  values: string[];
-  handleClickOptionListItem: (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  handleKeyDownControlOpen: (
+    event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
   handleKeyDownOptionListItem: (
     event: React.KeyboardEvent<HTMLDivElement>
   ) => void;
+  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
+  isError?: boolean;
+  isOpen: boolean;
   menuItemRef: React.MutableRefObject<HTMLDivElement>;
-  controlRef: React.MutableRefObject<HTMLDivElement>;
-  componentWrapRef: React.MutableRefObject<any>;
+  options: {
+    label: string;
+    value: string;
+  }[];
+  values: string[];
 };
 
 // ----------------------------------------
@@ -65,14 +64,14 @@ export const Component: React.VFC<Props> = (props) => {
 
     return (
       <OptionListItem
-        ref={createRef()}
         key={rowRendererProps.key}
-        style={rowRendererProps.style}
-        tabIndex={tabIndex}
+        ref={createRef()}
         data-value={option.value}
+        isSelected={isSelected}
         onClick={props.handleClickOptionListItem}
         onKeyDown={props.handleKeyDownOptionListItem}
-        isSelected={isSelected}
+        style={rowRendererProps.style}
+        tabIndex={tabIndex}
       >
         {option.label}
       </OptionListItem>
@@ -92,9 +91,8 @@ export const Component: React.VFC<Props> = (props) => {
     <Wrap ref={props.componentWrapRef}>
       <Control
         ref={props.controlRef}
-        tabIndex={0}
-        isError={props.isError}
         disabled={props.disabled}
+        isError={props.isError}
         onClick={
           props.isOpen
             ? props.handleClickControlClose
@@ -105,11 +103,12 @@ export const Component: React.VFC<Props> = (props) => {
             ? props.handleKeyDownControlClose
             : props.handleKeyDownControlOpen
         }
+        tabIndex={0}
       >
         <HiddenInput
-          value={props.values}
           aria-hidden
           tabIndex={-1}
+          value={props.values}
           {...props.inputProps}
         />
         {props.values.length > 0 ? (
@@ -125,21 +124,21 @@ export const Component: React.VFC<Props> = (props) => {
 
       <CSSTransition
         classNames={transitionClassName}
-        timeout={700}
         in={props.isOpen}
+        timeout={700}
       >
         <OptionListWrap>
           <OptionList>
             <ReactVirtualizedAutoSizer>
               {({ height, width }) => (
                 <ReactVirtualizedList
-                  tabIndex={-1}
-                  scrollToIndex={scrollToIndex}
-                  width={width}
                   height={height}
                   rowCount={props.options.length}
                   rowHeight={40}
                   rowRenderer={rowRenderer}
+                  scrollToIndex={scrollToIndex}
+                  tabIndex={-1}
+                  width={width}
                 />
               )}
             </ReactVirtualizedAutoSizer>
@@ -159,8 +158,8 @@ const Wrap = styled.div`
 `;
 
 type ControlProps = {
-  isError: Props['isError'];
   disabled: Props['disabled'];
+  isError: Props['isError'];
 };
 const Control = styled.div<ControlProps>`
   border-radius: 6px;

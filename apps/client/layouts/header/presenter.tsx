@@ -13,9 +13,9 @@ export const Component: React.VFC = () => (
   <Wrapper>
     <Heading>Sandbox React Virtualized</Heading>
     <Link
-      target="_blank"
-      rel="noreferrer"
       href="https://github.com/tyankatsu0105/sandbox-react-virtualized"
+      rel="noreferrer"
+      target="_blank"
     >
       GitHub
     </Link>
